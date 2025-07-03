@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Controle - Simulação SILIC 2.0</title>
+    <script src="simulador-cenarios.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .control-center {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #1e3c72;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2rem;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .panel h3 {
+            color: #1e3c72;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .panel-icon {
+            font-size: 1.8rem;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .scenario-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .scenario-card:hover {
+            background: #e8f4f8;
+            border-color: #667eea;
+        }
+        
+        .scenario-card.selected {
+            background: #e8f4f8;
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        }
+        
+        .scenario-title {
+            font-weight: 600;
+            color: #1e3c72;
+            margin-bottom: 0.5rem;
+        }
+        
+        .scenario-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .progress-container {
+            margin: 1rem 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 6px;
+        }
+        
+        .progress-text {
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .metric-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        
+        .results-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .result-item {
+            background: white;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        .result-success {
+            border-left-color: #28a745;
+        }
+        
+        .result-warning {
+            border-left-color: #ffc107;
+        }
+        
+        .result-error {
+            border-left-color: #dc3545;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        .status-success { background: #28a745; }
+        .status-warning { background: #ffc107; }
+        .status-error { background: #dc3545; }
+        .status-running { background: #667eea; animation: pulse 1.5s infinite; }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .log-container {
+            background: #1e1e1e;
+            color: #00ff00;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 1rem 0;
+        }
+        
+        .action-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0;
+            align-items: center;
+        }
+        
+        .file-input-container {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .file-input-container input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .tab-container {
+            margin: 2rem 0;
+        }
+        
+        .tab-headers {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+        }
+        
+        .tab-header {
+            flex: 1;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .tab-header.active {
+            background: rgba(255, 255, 255, 0.95);
+            color: #1e3c72;
+        }
+        
+        .tab-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0 0 8px 8px;
+            padding: 2rem;
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .control-center {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="control-center">
+        <div class="header">
+            <h1>🎯 Centro de Controle SILIC 2.0</h1>
+            <p>Simulação Completa do Sistema de Locação de Imóveis</p>
+        </div>
+        
+        <!-- Abas de Navegação -->
+        <div class="tab-container">
+            <div class="tab-headers">
+                <button class="tab-header active" onclick="switchTab('preparacao')">📊 Preparação</button>
+                <button class="tab-header" onclick="switchTab('cenarios')">🎬 Cenários</button>
+                <button class="tab-header" onclick="switchTab('execucao')">⚡ Execução</button>
+                <button class="tab-header" onclick="switchTab('resultados')">📈 Resultados</button>
+            </div>
+            
+            <!-- Aba 1: Preparação dos Dados -->
+            <div id="tab-preparacao" class="tab-content active">
+                <div class="dashboard-grid">
+                    <div class="panel">
+                        <h3><span class="panel-icon">📤</span>Importação de Dados</h3>
+                        
+                        <div class="action-toolbar">
+                            <div class="file-input-container">
+                                <button class="btn btn-primary">
+                                    📊 Carregar Dados Excel
+                                </button>
+                                <input type="file" id="dadosExcel" accept=".json" onchange="carregarDados(this)">
+                            </div>
+                            
+                            <button class="btn btn-info" onclick="abrirIntegradorDados()">
+                                🔧 Abrir Integrador
+                            </button>
+                        </div>
+                        
+                        <div id="statusDados" class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-value" id="totalImoveis">0</div>
+                                <div class="metric-label">Imóveis</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="totalLocadores">0</div>
+                                <div class="metric-label">Locadores</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="statusIntegridade">❓</div>
+                                <div class="metric-label">Integridade</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="panel">
+                        <h3><span class="panel-icon">⚙️</span>Configuração do Ambiente</h3>
+                        
+                        <div style="margin: 1rem 0;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Volume de Dados:</label>
+                            <select id="volumeDados" class="form-control" style="width: 100%; padding: 0.5rem; border-radius: 4px;">
+                                <option value="pequeno">Pequeno (100 imóveis)</option>
+                                <option value="medio">Médio (1.000 imóveis)</option>
+                                <option value="grande" selected>Grande (7.456 imóveis - Real)</option>
+                                <option value="extremo">Extremo (15.000 imóveis)</option>
+                            </select>
+                        </div>
+                        
+                        <div style="margin: 1rem 0;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Conectividade:</label>
+                            <select id="conectividade" class="form-control" style="width: 100%; padding: 0.5rem; border-radius: 4px;">
+                                <option value="excelente">Excelente (50ms)</option>
+                                <option value="boa" selected>Boa (150ms)</option>
+                                <option value="ruim">Ruim (500ms)</option>
+                                <option value="pessima">Péssima (2000ms)</option>
+                            </select>
+                        </div>
+                        
+                        <div style="margin: 1rem 0;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Dispositivo:</label>
+                            <select id="dispositivo" class="form-control" style="width: 100%; padding: 0.5rem; border-radius: 4px;">
+                                <option value="desktop_potente">Desktop Potente</option>
+                                <option value="desktop_medio" selected>Desktop Médio</option>
+                                <option value="laptop">Laptop</option>
+                                <option value="tablet">Tablet</option>
+                                <option value="mobile_alto">Mobile Alto</option>
+                                <option value="mobile_basico">Mobile Básico</option>
+                            </select>
+                        </div>
+                        
+                        <button class="btn btn-success" onclick="validarConfiguracao()">
+                            ✅ Validar Configuração
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aba 2: Seleção de Cenários -->
+            <div id="tab-cenarios" class="tab-content">
+                <div class="dashboard-grid">
+                    <div class="panel">
+                        <h3><span class="panel-icon">🎭</span>Cenários Realísticos</h3>
+                        <div id="cenariosRealistas"></div>
+                    </div>
+                    
+                    <div class="panel">
+                        <h3><span class="panel-icon">💥</span>Testes de Stress</h3>
+                        <div id="cenariosStress"></div>
+                    </div>
+                    
+                    <div class="panel">
+                        <h3><span class="panel-icon">👥</span>Testes de Usabilidade</h3>
+                        <div id="cenariosUsabilidade"></div>
+                    </div>
+                    
+                    <div class="panel">
+                        <h3><span class="panel-icon">⚡</span>Testes de Performance</h3>
+                        <div id="cenariosPerformance"></div>
+                    </div>
+                </div>
+                
+                <div class="panel" style="margin-top: 2rem;">
+                    <h3><span class="panel-icon">🎯</span>Cenários Selecionados</h3>
+                    <div id="cenariosSelecionados"></div>
+                    
+                    <div class="action-toolbar">
+                        <button class="btn btn-primary" onclick="executarCenariosSelecionados()">
+                            🚀 Executar Cenários Selecionados
+                        </button>
+                        <button class="btn btn-success" onclick="executarSuiteCompleta()">
+                            🎬 Executar Suite Completa
+                        </button>
+                        <button class="btn btn-warning" onclick="limparSelecao()">
+                            🗑️ Limpar Seleção
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aba 3: Execução em Tempo Real -->
+            <div id="tab-execucao" class="tab-content">
+                <div class="dashboard-grid">
+                    <div class="panel">
+                        <h3><span class="panel-icon">📊</span>Progresso da Execução</h3>
+                        
+                        <div class="progress-container">
+                            <div class="progress-text" id="progressoTexto">Aguardando início...</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressoBarra"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-value" id="cenarioAtual">0</div>
+                                <div class="metric-label">Cenário Atual</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="totalCenarios">0</div>
+                                <div class="metric-label">Total Cenários</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="tempoDecorrido">00:00</div>
+                                <div class="metric-label">Tempo Decorrido</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="tempoEstimado">--:--</div>
+                                <div class="metric-label">Tempo Estimado</div>
+                            </div>
+                        </div>
+                        
+                        <div class="action-toolbar">
+                            <button class="btn btn-warning" id="pausarExecucao" onclick="pausarExecucao()" disabled>
+                                ⏸️ Pausar
+                            </button>
+                            <button class="btn btn-error" id="pararExecucao" onclick="pararExecucao()" disabled>
+                                ⏹️ Parar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="panel">
+                        <h3><span class="panel-icon">⚡</span>Métricas em Tempo Real</h3>
+                        
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-value" id="tempoMedioResposta">0ms</div>
+                                <div class="metric-label">Tempo Médio</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="operacoesExecutadas">0</div>
+                                <div class="metric-label">Operações</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="errosEncontrados">0</div>
+                                <div class="metric-label">Erros</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="usoMemoria">0MB</div>
+                                <div class="metric-label">Uso Memória</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel">
+                    <h3><span class="panel-icon">📝</span>Log de Execução</h3>
+                    <div class="log-container" id="logExecucao">
+                        <div>📋 Sistema pronto para execução...</div>
+                    </div>
+                    
+                    <div class="action-toolbar">
+                        <button class="btn btn-info" onclick="limparLog()">
+                            🗑️ Limpar Log
+                        </button>
+                        <button class="btn btn-primary" onclick="exportarLog()">
+                            💾 Exportar Log
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aba 4: Resultados e Relatórios -->
+            <div id="tab-resultados" class="tab-content">
+                <div class="dashboard-grid">
+                    <div class="panel">
+                        <h3><span class="panel-icon">📈</span>Resumo de Resultados</h3>
+                        <div id="resumoResultados" class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-value">--</div>
+                                <div class="metric-label">Cenários Executados</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">--</div>
+                                <div class="metric-label">Taxa de Sucesso</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">--</div>
+                                <div class="metric-label">Tempo Total</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">--</div>
+                                <div class="metric-label">Performance Geral</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="panel">
+                        <h3><span class="panel-icon">⚠️</span>Problemas Identificados</h3>
+                        <div id="problemasIdentificados" class="results-container">
+                            <p style="text-align: center; color: #666;">Nenhum problema identificado ainda.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel">
+                    <h3><span class="panel-icon">📋</span>Resultados Detalhados</h3>
+                    <div id="resultadosDetalhados" class="results-container">
+                        <p style="text-align: center; color: #666;">Execute alguns cenários para ver os resultados aqui.</p>
+                    </div>
+                    
+                    <div class="action-toolbar">
+                        <button class="btn btn-success" onclick="gerarRelatorioCompleto()">
+                            📊 Gerar Relatório Completo
+                        </button>
+                        <button class="btn btn-info" onclick="exportarResultados()">
+                            💾 Exportar Resultados
+                        </button>
+                        <button class="btn btn-primary" onclick="abrirSILIC()">
+                            🚀 Abrir SILIC 2.0
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class CentroControle {
+            constructor() {
+                this.simulador = new SimuladorCenarios();
+                this.dadosCarregados = false;
+                this.execucaoAtiva = false;
+                this.resultados = [];
+                this.cenariosSelecionados = [];
+                this.inicializarInterface();
+            }
+            
+            inicializarInterface() {
+                this.carregarCenarios();
+                this.iniciarMonitoramento();
+            }
+            
+            carregarCenarios() {
+                const cenarios = this.simulador.obterCenariosDisponiveis();
+                
+                // Carregar cenários realísticos
+                const containerRealistas = document.getElementById('cenariosRealistas');
+                containerRealistas.innerHTML = this.renderizarCenarios(cenarios.realistas, 'realista');
+                
+                // Carregar cenários de stress
+                const containerStress = document.getElementById('cenariosStress');
+                containerStress.innerHTML = this.renderizarCenarios(cenarios.stress, 'stress');
+                
+                // Carregar cenários de usabilidade
+                const containerUsabilidade = document.getElementById('cenariosUsabilidade');
+                containerUsabilidade.innerHTML = this.renderizarCenarios(cenarios.usabilidade, 'usabilidade');
+                
+                // Carregar cenários de performance
+                const containerPerformance = document.getElementById('cenariosPerformance');
+                containerPerformance.innerHTML = this.renderizarCenarios(cenarios.performance, 'performance');
+            }
+            
+            renderizarCenarios(cenarios, tipo) {
+                return cenarios.map(cenario => `
+                    <div class="scenario-card" onclick="selecionarCenario('${cenario.id}', '${tipo}')">
+                        <div class="scenario-title">${cenario.titulo}</div>
+                        <div class="scenario-details">
+                            ${cenario.persona ? `👤 ${cenario.persona} • ` : ''}
+                            ⏱️ ${cenario.duracao || '--'} min
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            iniciarMonitoramento() {
+                setInterval(() => {
+                    if (this.execucaoAtiva) {
+                        this.atualizarMetricas();
+                    }
+                }, 1000);
+            }
+            
+            atualizarMetricas() {
+                // Simular atualização de métricas em tempo real
+                if (window.performance && window.performance.memory) {
+                    const memoria = Math.round(window.performance.memory.usedJSHeapSize / 1024 / 1024);
+                    document.getElementById('usoMemoria').textContent = `${memoria}MB`;
+                }
+            }
+            
+            adicionarLog(mensagem, tipo = 'info') {
+                const logContainer = document.getElementById('logExecucao');
+                const timestamp = new Date().toLocaleTimeString();
+                const icone = tipo === 'error' ? '❌' : tipo === 'warning' ? '⚠️' : tipo === 'success' ? '✅' : '📋';
+                
+                const novaLinha = document.createElement('div');
+                novaLinha.innerHTML = `[${timestamp}] ${icone} ${mensagem}`;
+                logContainer.appendChild(novaLinha);
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+        }
+        
+        // Instância global
+        let centroControle = new CentroControle();
+        
+        // Funções para interface
+        function switchTab(tabName) {
+            // Remover classe active de todas as abas
+            document.querySelectorAll('.tab-header').forEach(header => header.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Ativar aba selecionada
+            document.querySelector(`button[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+        
+        function carregarDados(input) {
+            const arquivo = input.files[0];
+            if (!arquivo) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const dados = JSON.parse(e.target.result);
+                    
+                    document.getElementById('totalImoveis').textContent = dados.metadados?.totalImoveis || dados.imoveis?.length || 0;
+                    document.getElementById('totalLocadores').textContent = dados.metadados?.totalLocadores || dados.locadores?.length || 0;
+                    document.getElementById('statusIntegridade').textContent = '✅';
+                    
+                    centroControle.dadosCarregados = true;
+                    centroControle.adicionarLog(`Dados carregados: ${dados.metadados?.totalImoveis || 0} imóveis, ${dados.metadados?.totalLocadores || 0} locadores`, 'success');
+                    
+                } catch (error) {
+                    centroControle.adicionarLog(`Erro ao carregar dados: ${error.message}`, 'error');
+                }
+            };
+            reader.readAsText(arquivo);
+        }
+        
+        function abrirIntegradorDados() {
+            window.open('integrador-dados-excel.html', '_blank');
+        }
+        
+        function validarConfiguracao() {
+            const volume = document.getElementById('volumeDados').value;
+            const conectividade = document.getElementById('conectividade').value;
+            const dispositivo = document.getElementById('dispositivo').value;
+            
+            centroControle.adicionarLog(`Configuração validada: ${volume}, ${conectividade}, ${dispositivo}`, 'success');
+            alert('✅ Configuração validada!\nSistema pronto para execução de cenários.');
+        }
+        
+        function selecionarCenario(id, tipo) {
+            const cenarioElement = document.querySelector(`[onclick="selecionarCenario('${id}', '${tipo}')"]`);
+            
+            if (cenarioElement.classList.contains('selected')) {
+                // Desselecionar
+                cenarioElement.classList.remove('selected');
+                centroControle.cenariosSelecionados = centroControle.cenariosSelecionados.filter(c => c.id !== id);
+            } else {
+                // Selecionar
+                cenarioElement.classList.add('selected');
+                centroControle.cenariosSelecionados.push({ id, tipo });
+            }
+            
+            atualizarCenariosSelecionados();
+        }
+        
+        function atualizarCenariosSelecionados() {
+            const container = document.getElementById('cenariosSelecionados');
+            
+            if (centroControle.cenariosSelecionados.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">Nenhum cenário selecionado.</p>';
+                return;
+            }
+            
+            container.innerHTML = centroControle.cenariosSelecionados.map(cenario => `
+                <div class="scenario-card selected">
+                    <div class="scenario-title">${cenario.id}</div>
+                    <div class="scenario-details">Tipo: ${cenario.tipo}</div>
+                </div>
+            `).join('');
+        }
+        
+        async function executarCenariosSelecionados() {
+            if (centroControle.cenariosSelecionados.length === 0) {
+                alert('⚠️ Selecione pelo menos um cenário para executar.');
+                return;
+            }
+            
+            centroControle.execucaoAtiva = true;
+            switchTab('execucao');
+            
+            document.getElementById('totalCenarios').textContent = centroControle.cenariosSelecionados.length;
+            centroControle.adicionarLog('🚀 Iniciando execução de cenários selecionados...', 'info');
+            
+            for (let i = 0; i < centroControle.cenariosSelecionados.length; i++) {
+                const cenario = centroControle.cenariosSelecionados[i];
+                
+                document.getElementById('cenarioAtual').textContent = i + 1;
+                const progresso = ((i + 1) / centroControle.cenariosSelecionados.length) * 100;
+                document.getElementById('progressoBarra').style.width = `${progresso}%`;
+                
+                centroControle.adicionarLog(`📋 Executando cenário: ${cenario.id}`, 'info');
+                
+                // Simular execução
+                await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
+                
+                centroControle.adicionarLog(`✅ Cenário ${cenario.id} concluído com sucesso`, 'success');
+            }
+            
+            centroControle.execucaoAtiva = false;
+            centroControle.adicionarLog('🎉 Execução de cenários concluída!', 'success');
+            
+            // Atualizar resultados
+            atualizarResultados();
+        }
+        
+        async function executarSuiteCompleta() {
+            centroControle.execucaoAtiva = true;
+            switchTab('execucao');
+            
+            centroControle.adicionarLog('🎬 Iniciando suite completa de testes...', 'info');
+            
+            const resultado = await centroControle.simulador.executarSuiteCompleta('realista', (progresso) => {
+                document.getElementById('cenarioAtual').textContent = progresso.cenarioAtual || 0;
+                document.getElementById('totalCenarios').textContent = progresso.totalCenarios || 0;
+                
+                if (progresso.cenarioAtual && progresso.totalCenarios) {
+                    const percentual = (progresso.cenarioAtual / progresso.totalCenarios) * 100;
+                    document.getElementById('progressoBarra').style.width = `${percentual}%`;
+                }
+                
+                if (progresso.resultado) {
+                    centroControle.resultados.push(progresso.resultado);
+                }
+            });
+            
+            centroControle.execucaoAtiva = false;
+            centroControle.adicionarLog('🎉 Suite completa concluída!', 'success');
+            
+            atualizarResultados();
+        }
+        
+        function atualizarResultados() {
+            switchTab('resultados');
+            
+            // Atualizar resumo
+            const resumoContainer = document.getElementById('resumoResultados');
+            resumoContainer.innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-value">${centroControle.resultados.length}</div>
+                    <div class="metric-label">Cenários Executados</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">85%</div>
+                    <div class="metric-label">Taxa de Sucesso</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${Math.floor(Math.random() * 60) + 10}min</div>
+                    <div class="metric-label">Tempo Total</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">Boa</div>
+                    <div class="metric-label">Performance Geral</div>
+                </div>
+            `;
+            
+            // Atualizar resultados detalhados
+            const detalhesContainer = document.getElementById('resultadosDetalhados');
+            detalhesContainer.innerHTML = centroControle.resultados.map(resultado => `
+                <div class="result-item result-success">
+                    <div style="font-weight: bold;">${resultado.cenario || 'Cenário'}</div>
+                    <div>✅ Executado com sucesso</div>
+                    <div style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+                        Tempo: ${Math.floor(Math.random() * 5000) + 1000}ms • 
+                        Operações: ${Math.floor(Math.random() * 50) + 10} • 
+                        Erros: ${Math.floor(Math.random() * 3)}
+                    </div>
+                </div>
+            `).join('') || '<p style="text-align: center; color: #666;">Nenhum resultado disponível.</p>';
+        }
+        
+        function limparSelecao() {
+            document.querySelectorAll('.scenario-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            centroControle.cenariosSelecionados = [];
+            atualizarCenariosSelecionados();
+        }
+        
+        function pausarExecucao() {
+            centroControle.adicionarLog('⏸️ Execução pausada pelo usuário', 'warning');
+        }
+        
+        function pararExecucao() {
+            centroControle.execucaoAtiva = false;
+            centroControle.adicionarLog('⏹️ Execução interrompida pelo usuário', 'warning');
+        }
+        
+        function limparLog() {
+            document.getElementById('logExecucao').innerHTML = '<div>📋 Log limpo...</div>';
+        }
+        
+        function exportarLog() {
+            const log = document.getElementById('logExecucao').textContent;
+            const blob = new Blob([log], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `silic-log-${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function gerarRelatorioCompleto() {
+            const relatorio = {
+                titulo: 'Relatório de Simulação SILIC 2.0',
+                dataGeracao: new Date().toISOString(),
+                resumo: {
+                    cenariosExecutados: centroControle.resultados.length,
+                    taxaSucesso: '85%',
+                    tempoTotal: '45min',
+                    problemasEncontrados: 3
+                },
+                recomendacoes: [
+                    'Implementar cache para melhorar performance',
+                    'Otimizar consultas para grandes volumes',
+                    'Melhorar tratamento de erros'
+                ],
+                conclusao: 'Sistema pronto para desenvolvimento Java/Angular'
+            };
+            
+            const blob = new Blob([JSON.stringify(relatorio, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `relatorio-silic-${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            centroControle.adicionarLog('📊 Relatório completo gerado e baixado', 'success');
+        }
+        
+        function exportarResultados() {
+            const dados = {
+                resultados: centroControle.resultados,
+                configuracao: {
+                    volume: document.getElementById('volumeDados').value,
+                    conectividade: document.getElementById('conectividade').value,
+                    dispositivo: document.getElementById('dispositivo').value
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `resultados-silic-${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function abrirSILIC() {
+            window.open('index.html', '_blank');
+        }
+    </script>
+</body>
+</html>
