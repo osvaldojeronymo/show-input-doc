@@ -98,11 +98,13 @@ const locadores = [
         tipo: "Pessoa Física",
         cpf: "789.123.456-04",
         documentos: {
+            // Documentação do Imóvel
             "Matrícula do Imóvel": false,
             "Certidão Negativa IPTU": true,
             "Habite-se": false,
             "Permissão Atividade Bancária": false,
             "Manifestação CILOG": true,
+            // Documentação do Locador - Pessoa Física
             "Documento de Identidade": true,
             "CND Federal": true,
             "Documento Cônjuge": true
@@ -114,16 +116,19 @@ const locadores = [
         tipo: "Pessoa Jurídica",
         cnpj: "98.765.432/0001-10",
         documentos: {
+            // Documentação do Imóvel
             "Matrícula do Imóvel": true,
             "Certidão Negativa IPTU": true,
             "Habite-se": true,
             "Permissão Atividade Bancária": true,
             "Manifestação CILOG": false,
+            // Documentação do Locador - Pessoa Jurídica
             "CNPJ": true,
             "Ato Constitutivo": false,
             "Certidão Junta Comercial": true,
             "CND Federal": false,
             "Certidão FGTS": true,
+            // Documentação do Representante Legal
             "Procuração": false,
             "Documento Representante": true
         }
@@ -134,11 +139,13 @@ const locadores = [
         tipo: "Pessoa Física",
         cpf: "321.654.987-05",
         documentos: {
+            // Documentação do Imóvel
             "Matrícula do Imóvel": true,
             "Certidão Negativa IPTU": true,
             "Habite-se": true,
             "Permissão Atividade Bancária": true,
             "Manifestação CILOG": false,
+            // Documentação do Locador - Pessoa Física
             "Documento de Identidade": true,
             "CND Federal": true,
             "Documento Cônjuge": false
@@ -150,11 +157,13 @@ const locadores = [
         tipo: "Pessoa Física",
         cpf: "654.321.789-06",
         documentos: {
+            // Documentação do Imóvel
             "Matrícula do Imóvel": false,
             "Certidão Negativa IPTU": false,
             "Habite-se": true,
             "Permissão Atividade Bancária": true,
             "Manifestação CILOG": true,
+            // Documentação do Locador - Pessoa Física
             "Documento de Identidade": true,
             "CND Federal": false,
             "Documento Cônjuge": true
@@ -166,16 +175,19 @@ const locadores = [
         tipo: "Pessoa Jurídica",
         cnpj: "11.222.333/0001-44",
         documentos: {
+            // Documentação do Imóvel
             "Matrícula do Imóvel": true,
             "Certidão Negativa IPTU": false,
             "Habite-se": false,
             "Permissão Atividade Bancária": true,
             "Manifestação CILOG": false,
+            // Documentação do Locador - Pessoa Jurídica
             "CNPJ": true,
             "Ato Constitutivo": true,
             "Certidão Junta Comercial": true,
             "CND Federal": true,
             "Certidão FGTS": false,
+            // Documentação do Representante Legal
             "Procuração": true,
             "Documento Representante": false
         }
@@ -186,11 +198,13 @@ const locadores = [
         tipo: "Pessoa Física",
         cpf: "147.258.369-07",
         documentos: {
+            // Documentação do Imóvel
             "Matrícula do Imóvel": true,
             "Certidão Negativa IPTU": true,
             "Habite-se": true,
             "Permissão Atividade Bancária": true,
             "Manifestação CILOG": false,
+            // Documentação do Locador - Pessoa Física
             "Documento de Identidade": true,
             "CND Federal": true,
             "Documento Cônjuge": true
