@@ -10,6 +10,11 @@ class SistemaSILIC {
         this.itemsPerPage = 10;
         this.currentView = 'table';
         
+        // Paginação para imóveis
+        this.currentPageImoveis = 1;
+        this.itemsPerPageImoveis = 10;
+        this.totalPaginasImoveis = 1;
+        
         this.inicializar();
         this.carregarDadosDemo();
     }
@@ -30,375 +35,39 @@ class SistemaSILIC {
         document.getElementById('filtroStatus')?.addEventListener('change', () => this.filtrarLocadores());
         document.getElementById('limparFiltros')?.addEventListener('click', () => this.limparFiltros());
         
-        // Paginação
+        // Paginação de locadores
         document.getElementById('itensPorPaginaSelect')?.addEventListener('change', (e) => {
             this.itemsPerPage = parseInt(e.target.value);
             this.currentPage = 1;
             this.atualizarListaLocadores();
         });
 
+        // Paginação de imóveis
+        document.getElementById('imoveisPorPaginaSelect')?.addEventListener('change', (e) => {
+            this.itemsPerPageImoveis = parseInt(e.target.value);
+            this.currentPageImoveis = 1;
+            this.atualizarTabelaImoveis();
+        });
+
         // Máscara para CEP
         this.aplicarMascaraCEP();
+        
+        // Event listener para fechar modal com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.fecharModalDetalhes();
+            }
+        });
         
         this.atualizarDashboard();
     }
 
     carregarDadosDemo() {
-        // Dados de demonstração para imóveis
-        const imoveisDemo = [
-            {
-                id: 1,
-                codigo: '20001234',
-                denominacao: 'ED - CAIXA Brasília Centro, DF',
-                local: 'Brasília',
-                endereco: 'SBS Quadra 04, Bloco A, Lote 3/4',
-                cep: '70070-140',
-                status: 'Ativo',
-                inicioValidade: '2023-01-15',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'BSB123456',
-                numeroITR: null
-            },
-            {
-                id: 2,
-                codigo: '20005678',
-                denominacao: 'ED - CAIXA São Paulo Centro, SP',
-                local: 'São Paulo',
-                endereco: 'Praça da Sé, 111',
-                cep: '01001-000',
-                status: 'Ativo',
-                inicioValidade: '2023-02-20',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'SP789123',
-                numeroITR: null
-            },
-            {
-                id: 3,
-                codigo: '20009999',
-                denominacao: 'ED - CAIXA Rio de Janeiro Centro, RJ',
-                local: 'Rio de Janeiro',
-                endereco: 'Av. Presidente Vargas, 3131',
-                cep: '20210-030',
-                status: 'Ativo',
-                inicioValidade: '2023-03-10',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'RJ456789',
-                numeroITR: null
-            },
-            {
-                id: 4,
-                codigo: '20001111',
-                denominacao: 'ED - CAIXA Belo Horizonte Centro, MG',
-                local: 'Belo Horizonte',
-                endereco: 'Av. Afonso Pena, 1000',
-                cep: '30130-002',
-                status: 'Ativo',
-                inicioValidade: '2023-01-05',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'BH123789',
-                numeroITR: null
-            },
-            {
-                id: 5,
-                codigo: '20002222',
-                denominacao: 'ED - CAIXA Fortaleza Centro, CE',
-                local: 'Fortaleza',
-                endereco: 'Rua Major Facundo, 500',
-                cep: '60025-100',
-                status: 'Ativo',
-                inicioValidade: '2023-04-12',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'FOR789456',
-                numeroITR: null
-            },
-            {
-                id: 6,
-                codigo: '20003333',
-                denominacao: 'ED - CAIXA Recife Centro, PE',
-                local: 'Recife',
-                endereco: 'Av. Guararapes, 250',
-                cep: '50010-000',
-                status: 'Em prospecção',
-                inicioValidade: '2023-06-01',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'REC456123',
-                numeroITR: null
-            },
-            {
-                id: 7,
-                codigo: '20004444',
-                denominacao: 'ED - CAIXA Salvador Centro, BA',
-                local: 'Salvador',
-                endereco: 'Rua Miguel Calmon, 285',
-                cep: '40070-110',
-                status: 'Ativo',
-                inicioValidade: '2023-02-28',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'SSA789123',
-                numeroITR: null
-            },
-            {
-                id: 8,
-                codigo: '20005555',
-                denominacao: 'ED - CAIXA Porto Alegre Centro, RS',
-                local: 'Porto Alegre',
-                endereco: 'Rua dos Andradas, 1001',
-                cep: '90020-007',
-                status: 'Ativo',
-                inicioValidade: '2023-03-15',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'POA123456',
-                numeroITR: null
-            },
-            {
-                id: 9,
-                codigo: '20006666',
-                denominacao: 'ED - CAIXA Curitiba Centro, PR',
-                local: 'Curitiba',
-                endereco: 'Rua XV de Novembro, 200',
-                cep: '80020-310',
-                status: 'Em mobilização',
-                inicioValidade: '2023-05-20',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'CWB789456',
-                numeroITR: null
-            },
-            {
-                id: 10,
-                codigo: '20007777',
-                denominacao: 'ED - CAIXA Manaus Centro, AM',
-                local: 'Manaus',
-                endereco: 'Av. Eduardo Ribeiro, 620',
-                cep: '69010-001',
-                status: 'Ativo',
-                inicioValidade: '2023-04-08',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'MAO456789',
-                numeroITR: null
-            },
-            {
-                id: 11,
-                codigo: '20008888',
-                denominacao: 'ED - CAIXA Belém Centro, PA',
-                local: 'Belém',
-                endereco: 'Av. Presidente Vargas, 800',
-                cep: '66017-000',
-                status: 'Ativo',
-                inicioValidade: '2023-01-30',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'BEL123789',
-                numeroITR: null
-            },
-            {
-                id: 12,
-                codigo: '20009000',
-                denominacao: 'ED - CAIXA Goiânia Centro, GO',
-                local: 'Goiânia',
-                endereco: 'Av. Goiás, 300',
-                cep: '74010-010',
-                status: 'Ativo',
-                inicioValidade: '2023-03-22',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'GYN789123',
-                numeroITR: null
-            },
-            {
-                id: 13,
-                codigo: '20001010',
-                denominacao: 'ED - CAIXA Vitória Centro, ES',
-                local: 'Vitória',
-                endereco: 'Av. Jerônimo Monteiro, 100',
-                cep: '29010-001',
-                status: 'Em prospecção',
-                inicioValidade: '2023-06-15',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'VIT456789',
-                numeroITR: null
-            },
-            {
-                id: 14,
-                codigo: '20002020',
-                denominacao: 'ED - CAIXA Campo Grande Centro, MS',
-                local: 'Campo Grande',
-                endereco: 'Av. Afonso Pena, 1500',
-                cep: '79002-070',
-                status: 'Ativo',
-                inicioValidade: '2023-02-12',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'CGR123456',
-                numeroITR: null
-            },
-            {
-                id: 15,
-                codigo: '20003030',
-                denominacao: 'ED - CAIXA Cuiabá Centro, MT',
-                local: 'Cuiabá',
-                endereco: 'Av. Getúlio Vargas, 600',
-                cep: '78005-370',
-                status: 'Ativo',
-                inicioValidade: '2023-04-25',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'CBA789456',
-                numeroITR: null
-            },
-            {
-                id: 16,
-                codigo: '20004040',
-                denominacao: 'ED - CAIXA João Pessoa Centro, PB',
-                local: 'João Pessoa',
-                endereco: 'Av. Dom Pedro II, 400',
-                cep: '58010-660',
-                status: 'Em desmobilização',
-                inicioValidade: '2022-12-01',
-                objetoValidoAte: '2023-12-31',
-                inscricaoIPTU: 'JPA456123',
-                numeroITR: null
-            },
-            {
-                id: 17,
-                codigo: '20005050',
-                denominacao: 'ED - CAIXA Natal Centro, RN',
-                local: 'Natal',
-                endereco: 'Av. Rio Branco, 510',
-                cep: '59025-001',
-                status: 'Em prospecção',
-                inicioValidade: '2023-07-01',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'NAT789123',
-                numeroITR: null
-            },
-            {
-                id: 18,
-                codigo: '20006060',
-                denominacao: 'ED - CAIXA Aracaju Centro, SE',
-                local: 'Aracaju',
-                endereco: 'Rua João Pessoa, 120',
-                cep: '49010-000',
-                status: 'Ativo',
-                inicioValidade: '2023-05-10',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'AJU123789',
-                numeroITR: null
-            },
-            {
-                id: 19,
-                codigo: '20007070',
-                denominacao: 'ED - CAIXA Maceió Centro, AL',
-                local: 'Maceió',
-                endereco: 'Rua do Comércio, 200',
-                cep: '57020-000',
-                status: 'Em mobilização',
-                inicioValidade: '2023-06-20',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'MCZ456789',
-                numeroITR: null
-            },
-            {
-                id: 20,
-                codigo: '20008080',
-                denominacao: 'ED - CAIXA Teresina Centro, PI',
-                local: 'Teresina',
-                endereco: 'Rua Areolino de Abreu, 300',
-                cep: '64000-040',
-                status: 'Ativo',
-                inicioValidade: '2023-03-18',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'THE789123',
-                numeroITR: null
-            },
-            {
-                id: 21,
-                codigo: '20009090',
-                denominacao: 'ED - CAIXA São Luís Centro, MA',
-                local: 'São Luís',
-                endereco: 'Rua da Palma, 150',
-                cep: '65010-440',
-                status: 'Em desmobilização',
-                inicioValidade: '2022-11-15',
-                objetoValidoAte: '2023-11-30',
-                inscricaoIPTU: 'SLZ123456',
-                numeroITR: null
-            },
-            {
-                id: 22,
-                codigo: '20001212',
-                denominação: 'ED - CAIXA Florianópolis Centro, SC',
-                local: 'Florianópolis',
-                endereco: 'Rua Felipe Schmidt, 390',
-                cep: '88010-001',
-                status: 'Ativo',
-                inicioValidade: '2023-01-25',
-                objetoValidoAte: null,
-                inscricaoIPTU: 'FLN789456',
-                numeroITR: null
-            },
-            {
-                id: 23,
-                codigo: '20002323',
-                denominacao: 'ED - CAIXA Palmas Centro, TO',
-                local: 'Palmas',
-                endereco: 'Av. Teotônio Segurado, 1000',
-                cep: '77001-002',
-                status: 'Desativado',
-                inicioValidade: '2022-06-01',
-                objetoValidoAte: '2023-06-01',
-                inscricaoIPTU: 'PAL456123',
-                numeroITR: null
-            }
-        ];
-
-        // Dados de demonstração para locadores
-        const locadoresDemo = [
-            // Locadores para Brasília (imovel 1)
-            { id: 1, nome: 'João Silva Santos', tipo: 'Pessoa Física', imovelId: 1, documento: '123.456.789-01', documentos: this.gerarDocumentosDemo() },
-            { id: 2, nome: 'Maria Oliveira Costa', tipo: 'Pessoa Física', imovelId: 1, documento: '987.654.321-02', documentos: this.gerarDocumentosDemo() },
-            { id: 3, nome: 'Construtora ABC Ltda', tipo: 'Pessoa Jurídica', imovelId: 1, documento: '12.345.678/0001-90', documentos: this.gerarDocumentosDemo() },
-            
-            // Locadores para São Paulo (imovel 2)
-            { id: 4, nome: 'Carlos Eduardo Lima', tipo: 'Pessoa Física', imovelId: 2, documento: '456.789.123-03', documentos: this.gerarDocumentosDemo() },
-            { id: 5, nome: 'Ana Paula Ferreira', tipo: 'Pessoa Física', imovelId: 2, documento: '789.123.456-04', documentos: this.gerarDocumentosDemo() },
-            { id: 6, nome: 'Imobiliária Prime SP', tipo: 'Pessoa Jurídica', imovelId: 2, documento: '23.456.789/0001-81', documentos: this.gerarDocumentosDemo() },
-            { id: 7, nome: 'Roberto Almeida', tipo: 'Pessoa Física', imovelId: 2, documento: '321.654.987-05', documentos: this.gerarDocumentosDemo() },
-            
-            // Locadores para Rio de Janeiro (imovel 3)
-            { id: 8, nome: 'Fernanda Castro', tipo: 'Pessoa Física', imovelId: 3, documento: '654.321.789-06', documentos: this.gerarDocumentosDemo() },
-            { id: 9, nome: 'Incorporadora RJ S/A', tipo: 'Pessoa Jurídica', imovelId: 3, documento: '34.567.890/0001-72', documentos: this.gerarDocumentosDemo() },
-            
-            // Locadores para Belo Horizonte (imovel 4)
-            { id: 10, nome: 'Pedro Henrique Silva', tipo: 'Pessoa Física', imovelId: 4, documento: '147.258.369-07', documentos: this.gerarDocumentosDemo() },
-            { id: 11, nome: 'Juliana Rocha', tipo: 'Pessoa Física', imovelId: 4, documento: '258.369.147-08', documentos: this.gerarDocumentosDemo() },
-            { id: 12, nome: 'Construtora Minas Ltda', tipo: 'Pessoa Jurídica', imovelId: 4, documento: '45.678.901/0001-63', documentos: this.gerarDocumentosDemo() },
-            
-            // Locadores para Fortaleza (imovel 5)
-            { id: 13, nome: 'Rafael Moreira', tipo: 'Pessoa Física', imovelId: 5, documento: '369.147.258-09', documentos: this.gerarDocumentosDemo() },
-            { id: 14, nome: 'Camila Souza', tipo: 'Pessoa Física', imovelId: 5, documento: '741.852.963-10', documentos: this.gerarDocumentosDemo() },
-            
-            // Locadores para Salvador (imovel 7)
-            { id: 15, nome: 'Bruno Costa', tipo: 'Pessoa Física', imovelId: 7, documento: '852.963.741-11', documentos: this.gerarDocumentosDemo() },
-            { id: 16, nome: 'Larissa Pereira', tipo: 'Pessoa Física', imovelId: 7, documento: '963.741.852-12', documentos: this.gerarDocumentosDemo() },
-            { id: 17, nome: 'Imóveis Bahia Ltda', tipo: 'Pessoa Jurídica', imovelId: 7, documento: '56.789.012/0001-54', documentos: this.gerarDocumentosDemo() },
-            
-            // Locadores para Porto Alegre (imovel 8)
-            { id: 18, nome: 'Gustavo Ribeiro', tipo: 'Pessoa Física', imovelId: 8, documento: '159.357.486-13', documentos: this.gerarDocumentosDemo() },
-            { id: 19, nome: 'Patrícia Martins', tipo: 'Pessoa Física', imovelId: 8, documento: '357.486.159-14', documentos: this.gerarDocumentosDemo() },
-            
-            // Locadores para Manaus (imovel 10)
-            { id: 20, nome: 'Alexandre Santos', tipo: 'Pessoa Física', imovelId: 10, documento: '486.159.357-15', documentos: this.gerarDocumentosDemo() },
-            { id: 21, nome: 'Incorporadora Amazônia', tipo: 'Pessoa Jurídica', imovelId: 10, documento: '67.890.123/0001-45', documentos: this.gerarDocumentosDemo() },
-            
-            // Locadores para Belém (imovel 11)
-            { id: 22, nome: 'Marcos Vieira', tipo: 'Pessoa Física', imovelId: 11, documento: '159.486.357-16', documentos: this.gerarDocumentosDemo() },
-            { id: 23, nome: 'Priscila Gomes', tipo: 'Pessoa Física', imovelId: 11, documento: '486.357.159-17', documentos: this.gerarDocumentosDemo() },
-            
-            // Locadores para Goiânia (imovel 12)
-            { id: 24, nome: 'Rodrigo Barbosa', tipo: 'Pessoa Física', imovelId: 12, documento: '357.159.486-18', documentos: this.gerarDocumentosDemo() },
-            { id: 25, nome: 'Construtora GO S/A', tipo: 'Pessoa Jurídica', imovelId: 12, documento: '78.901.234/0001-36', documentos: this.gerarDocumentosDemo() },
-            
-            // Alguns imóveis sem locadores para demonstrar alertas
-        ];
-
-        this.imoveis = imoveisDemo;
-        this.locadores = locadoresDemo;
+        console.log('Carregando dados de demonstração...');
+        
+        // Gerar dados em massa para demonstrar performance com muitos imóveis
+        this.imoveis = this.gerarImoveisDemo(4500); // Simular mais de 4.000 imóveis
+        this.locadores = this.gerarLocadoresDemo();
         
         this.atualizarDashboard();
         this.atualizarTabelaImoveis();
@@ -407,6 +76,187 @@ class SistemaSILIC {
             imoveis: this.imoveis.length,
             locadores: this.locadores.length
         });
+    }
+
+    gerarImoveisDemo(quantidade = 4500) {
+        const cidades = [
+            'São Paulo', 'Rio de Janeiro', 'Brasília', 'Salvador', 'Fortaleza', 'Belo Horizonte',
+            'Manaus', 'Curitiba', 'Recife', 'Goiânia', 'Belém', 'Porto Alegre', 'Guarulhos',
+            'Campinas', 'São Luís', 'São Gonçalo', 'Maceió', 'Duque de Caxias', 'Nova Iguaçu',
+            'Teresina', 'Natal', 'Campo Grande', 'Osasco', 'Santo André', 'João Pessoa',
+            'Jaboatão dos Guararapes', 'Contagem', 'São Bernardo do Campo', 'Uberlândia',
+            'Sorocaba', 'Aracaju', 'Feira de Santana', 'Cuiabá', 'Joinville', 'Juiz de Fora',
+            'Londrina', 'Aparecida de Goiânia', 'Niterói', 'Belford Roxo', 'Caxias do Sul',
+            'Campos dos Goytacazes', 'Macapá', 'Vila Velha', 'São João de Meriti', 'Florianópolis',
+            'Santos', 'Ribeirão Preto', 'Vitória', 'Serra', 'Diadema', 'Carapicuíba',
+            'Mauá', 'São Vicente', 'Olinda', 'Franca', 'Petrópolis', 'Canoas', 'Paulista',
+            'Cascavel', 'Piracicaba', 'Blumenau', 'Maringá', 'Cariacica', 'Taubaté',
+            'São Carlos', 'Suzano', 'Jundiaí', 'Uberaba', 'Anápolis', 'Presidente Prudente'
+        ];
+
+        const status = ['Ativo', 'Em prospecção', 'Em mobilização', 'Em desmobilização', 'Desativado'];
+        const statusWeights = [0.65, 0.15, 0.10, 0.08, 0.02]; // Pesos para distribuição realista
+
+        const imoveis = [];
+
+        for (let i = 1; i <= quantidade; i++) {
+            const cidade = cidades[Math.floor(Math.random() * cidades.length)];
+            const uf = this.obterUFPorCidade(cidade);
+            const statusIndex = this.escolherComPeso(statusWeights);
+            const codigo = `2000${String(i).padStart(4, '0')}`;
+            
+            // Gerar datas realistas
+            const inicioValidade = this.gerarDataAleatoria('2022-01-01', '2023-12-31');
+            let objetoValidoAte = null;
+            if (status[statusIndex] === 'Desativado' || status[statusIndex] === 'Em desmobilização') {
+                objetoValidoAte = this.gerarDataAleatoria('2023-06-01', '2024-12-31');
+            }
+
+            imoveis.push({
+                id: i,
+                codigo: codigo,
+                denominacao: `ED - CAIXA ${cidade} ${this.gerarComplementoEndereco()}, ${uf}`,
+                local: cidade,
+                endereco: this.gerarEnderecoAleatorio(),
+                cep: this.gerarCEPAleatorio(),
+                status: status[statusIndex],
+                inicioValidade: inicioValidade,
+                objetoValidoAte: objetoValidoAte,
+                inscricaoIPTU: this.gerarInscricaoIPTU(),
+                numeroITR: Math.random() > 0.8 ? this.gerarNumeroITR() : null
+            });
+        }
+
+        return imoveis;
+    }
+
+    gerarLocadoresDemo() {
+        const nomes = [
+            'João Silva Santos', 'Maria Oliveira Costa', 'Carlos Eduardo Lima', 'Ana Paula Ferreira',
+            'Roberto Almeida', 'Fernanda Castro', 'Pedro Henrique Silva', 'Juliana Rocha',
+            'Rafael Moreira', 'Camila Souza', 'Bruno Costa', 'Larissa Pereira',
+            'Gustavo Ribeiro', 'Patrícia Martins', 'Alexandre Santos', 'Marcos Vieira',
+            'Priscila Gomes', 'Rodrigo Barbosa', 'Luciana Fernandes', 'Diego Carvalho',
+            'Isabela Mendes', 'Thiago Araújo', 'Vanessa Dias', 'Felipe Nascimento',
+            'Aline Cardoso', 'Leonardo Pinto', 'Bianca Torres', 'Mateus Correia'
+        ];
+
+        const empresas = [
+            'Construtora ABC Ltda', 'Imobiliária Prime', 'Incorporadora', 'Construções',
+            'Empreendimentos', 'Imóveis e Cia', 'Construtora Silva', 'Imobiliária Santos',
+            'Edificações Modernas', 'Construtech', 'Imóveis Premium', 'Construtora União'
+        ];
+
+        const locadores = [];
+        let idCounter = 1;
+
+        // Gerar locadores para uma amostra dos imóveis (não todos para simular realismo)
+        const imoveisComLocadores = this.shuffle(this.imoveis.slice(0, 100)); // Apenas os primeiros 100 para performance
+
+        imoveisComLocadores.forEach((imovel, index) => {
+            if (index < 80) { // 80% dos imóveis terão locadores
+                const numeroLocadores = Math.floor(Math.random() * 4) + 1; // 1 a 4 locadores por imóvel
+                
+                for (let i = 0; i < numeroLocadores; i++) {
+                    const ehPessoaJuridica = Math.random() > 0.7;
+                    const nome = ehPessoaJuridica ? 
+                        empresas[Math.floor(Math.random() * empresas.length)] + ' ' + Math.floor(Math.random() * 999) :
+                        nomes[Math.floor(Math.random() * nomes.length)];
+                    
+                    locadores.push({
+                        id: idCounter++,
+                        nome: nome,
+                        tipo: ehPessoaJuridica ? 'Pessoa Jurídica' : 'Pessoa Física',
+                        imovelId: imovel.id,
+                        documento: this.gerarDocumentoDemo(ehPessoaJuridica ? 'Pessoa Jurídica' : 'Pessoa Física'),
+                        documentos: this.gerarDocumentosDemo()
+                    });
+                }
+            }
+        });
+
+        return locadores;
+    }
+
+    shuffle(array) {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+    }
+
+    escolherComPeso(pesos) {
+        const random = Math.random();
+        let acumulado = 0;
+        
+        for (let i = 0; i < pesos.length; i++) {
+            acumulado += pesos[i];
+            if (random < acumulado) {
+                return i;
+            }
+        }
+        return pesos.length - 1;
+    }
+
+    obterUFPorCidade(cidade) {
+        const cidadesUF = {
+            'São Paulo': 'SP', 'Rio de Janeiro': 'RJ', 'Brasília': 'DF', 'Salvador': 'BA',
+            'Fortaleza': 'CE', 'Belo Horizonte': 'MG', 'Manaus': 'AM', 'Curitiba': 'PR',
+            'Recife': 'PE', 'Goiânia': 'GO', 'Belém': 'PA', 'Porto Alegre': 'RS',
+            'Guarulhos': 'SP', 'Campinas': 'SP', 'São Luís': 'MA', 'São Gonçalo': 'RJ',
+            'Maceió': 'AL', 'Duque de Caxias': 'RJ', 'Nova Iguaçu': 'RJ', 'Teresina': 'PI',
+            'Natal': 'RN', 'Campo Grande': 'MS', 'Osasco': 'SP', 'Santo André': 'SP',
+            'João Pessoa': 'PB', 'Jaboatão dos Guararapes': 'PE', 'Contagem': 'MG',
+            'São Bernardo do Campo': 'SP', 'Uberlândia': 'MG', 'Sorocaba': 'SP',
+            'Aracaju': 'SE', 'Feira de Santana': 'BA', 'Cuiabá': 'MT', 'Joinville': 'SC',
+            'Juiz de Fora': 'MG', 'Londrina': 'PR', 'Aparecida de Goiânia': 'GO',
+            'Niterói': 'RJ', 'Belford Roxo': 'RJ', 'Caxias do Sul': 'RS',
+            'Campos dos Goytacazes': 'RJ', 'Macapá': 'AP', 'Vila Velha': 'ES',
+            'São João de Meriti': 'RJ', 'Florianópolis': 'SC', 'Santos': 'SP',
+            'Ribeirão Preto': 'SP', 'Vitória': 'ES', 'Serra': 'ES', 'Diadema': 'SP'
+        };
+        return cidadesUF[cidade] || 'BR';
+    }
+
+    gerarComplementoEndereco() {
+        const complementos = ['Centro', 'Norte', 'Sul', 'Leste', 'Oeste', 'Zona Norte', 'Zona Sul', 'Downtown', 'Business', 'Corporate'];
+        return complementos[Math.floor(Math.random() * complementos.length)];
+    }
+
+    gerarEnderecoAleatorio() {
+        const tipos = ['Rua', 'Avenida', 'Alameda', 'Travessa', 'Praça'];
+        const nomes = ['das Flores', 'do Comércio', 'Brasil', 'da Independência', 'Santos Dumont', 'Getúlio Vargas', 'JK', 'do Centro'];
+        const numero = Math.floor(Math.random() * 9999) + 1;
+        
+        return `${tipos[Math.floor(Math.random() * tipos.length)]} ${nomes[Math.floor(Math.random() * nomes.length)]}, ${numero}`;
+    }
+
+    gerarCEPAleatorio() {
+        const parte1 = String(Math.floor(Math.random() * 99999)).padStart(5, '0');
+        const parte2 = String(Math.floor(Math.random() * 999)).padStart(3, '0');
+        return `${parte1}-${parte2}`;
+    }
+
+    gerarInscricaoIPTU() {
+        const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const prefixo = letras.charAt(Math.floor(Math.random() * letras.length)) + 
+                       letras.charAt(Math.floor(Math.random() * letras.length)) + 
+                       letras.charAt(Math.floor(Math.random() * letras.length));
+        const numeros = String(Math.floor(Math.random() * 999999)).padStart(6, '0');
+        return `${prefixo}${numeros}`;
+    }
+
+    gerarNumeroITR() {
+        return String(Math.floor(Math.random() * 9999999999)).padStart(10, '0');
+    }
+
+    gerarDataAleatoria(inicio, fim) {
+        const dataInicio = new Date(inicio).getTime();
+        const dataFim = new Date(fim).getTime();
+        const dataAleatoria = new Date(dataInicio + Math.random() * (dataFim - dataInicio));
+        return dataAleatoria.toISOString().split('T')[0];
     }
 
     gerarDocumentosDemo() {
@@ -498,6 +348,10 @@ class SistemaSILIC {
         this.atualizarTabelaImoveis();
         this.limparFormulario();
         
+        // Ir para a última página para mostrar o novo imóvel
+        this.currentPageImoveis = Math.ceil(this.imoveis.length / this.itemsPerPageImoveis);
+        this.atualizarTabelaImoveis();
+        
         alert('Imóvel cadastrado com sucesso!');
     }
 
@@ -549,16 +403,26 @@ class SistemaSILIC {
 
         tbody.innerHTML = '';
 
-        this.imoveis.forEach(imovel => {
+        // Calcular paginação
+        this.totalPaginasImoveis = Math.ceil(this.imoveis.length / this.itemsPerPageImoveis);
+        const startIndex = (this.currentPageImoveis - 1) * this.itemsPerPageImoveis;
+        const endIndex = startIndex + this.itemsPerPageImoveis;
+        const imoveisPagina = this.imoveis.slice(startIndex, endIndex);
+
+        imoveisPagina.forEach(imovel => {
             const locadoresDoImovel = this.locadores.filter(l => l.imovelId === imovel.id);
             const quantidadeLocadores = locadoresDoImovel.length;
             
             const row = tbody.insertRow();
             row.innerHTML = `
-                <td>${imovel.codigo}</td>
-                <td>${imovel.denominacao}</td>
+                <td><strong>${imovel.codigo}</strong></td>
+                <td>
+                    <div style="max-width: 250px; word-wrap: break-word;">
+                        ${imovel.denominacao}
+                    </div>
+                </td>
                 <td>${imovel.local}</td>
-                <td><span class="status-badge ${imovel.status.toLowerCase().replace(' ', '-')}">${imovel.status}</span></td>
+                <td>${this.formatarStatusBadge(imovel.status)}</td>
                 <td>
                     <div class="locadores-count">
                         <span class="count-badge ${quantidadeLocadores === 0 ? 'zero' : quantidadeLocadores < 3 ? 'few' : 'many'}">
@@ -570,11 +434,18 @@ class SistemaSILIC {
                 </td>
                 <td>
                     <div class="table-actions">
-                        <button class="btn btn-sm btn-primary" onclick="sistema.selecionarImovel(${imovel.id})">
-                            ${this.imovelSelecionado?.id === imovel.id ? '✓ Selecionado' : 'Selecionar'}
+                        <button class="btn btn-sm btn-info" onclick="sistema.mostrarDetalhesImovel(${imovel.id})" title="Ver detalhes completos">
+                            📋 Detalhar
                         </button>
-                        <button class="btn btn-sm btn-secondary" onclick="sistema.editarImovel(${imovel.id})">Editar</button>
-                        <button class="btn btn-sm btn-danger" onclick="sistema.removerImovel(${imovel.id})">Remover</button>
+                        <button class="btn btn-sm btn-primary" onclick="sistema.selecionarImovel(${imovel.id})" title="Selecionar para gerenciar locadores">
+                            ${this.imovelSelecionado?.id === imovel.id ? '✓ Selecionado' : '👥 Locadores'}
+                        </button>
+                        <button class="btn btn-sm btn-secondary" onclick="sistema.editarImovel(${imovel.id})" title="Editar imóvel">
+                            ✏️ Editar
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="sistema.removerImovel(${imovel.id})" title="Remover imóvel">
+                            🗑️ Remover
+                        </button>
                     </div>
                 </td>
             `;
@@ -583,7 +454,180 @@ class SistemaSILIC {
             if (quantidadeLocadores === 0) {
                 row.classList.add('imovel-warning');
             }
+            
+            // Destacar imóvel selecionado
+            if (this.imovelSelecionado?.id === imovel.id) {
+                row.style.backgroundColor = '#e3f2fd';
+                row.style.borderLeft = '4px solid var(--color-primary)';
+            }
         });
+
+        this.atualizarPaginacaoImoveis();
+        this.atualizarInfoImoveis();
+    }
+
+    formatarStatusBadge(status) {
+        const statusClass = status.toLowerCase().replace(/\s+/g, '-');
+        return `<span class="status-badge ${statusClass}">${status}</span>`;
+    }
+
+    atualizarPaginacaoImoveis() {
+        // Atualizar informações de paginação
+        const paginationInfo = document.getElementById('imoveis-pagination-info');
+        if (paginationInfo) {
+            paginationInfo.textContent = `Página ${this.currentPageImoveis} de ${this.totalPaginasImoveis}`;
+        }
+        
+        // Atualizar botões
+        const primeiraPagina = document.getElementById('primeiraPaginaImoveis');
+        const anteriorPagina = document.getElementById('anteriorPaginaImoveis');
+        const proximaPagina = document.getElementById('proximaPaginaImoveis');
+        const ultimaPagina = document.getElementById('ultimaPaginaImoveis');
+        
+        if (primeiraPagina) primeiraPagina.disabled = this.currentPageImoveis === 1;
+        if (anteriorPagina) anteriorPagina.disabled = this.currentPageImoveis === 1;
+        if (proximaPagina) proximaPagina.disabled = this.currentPageImoveis === this.totalPaginasImoveis;
+        if (ultimaPagina) ultimaPagina.disabled = this.currentPageImoveis === this.totalPaginasImoveis;
+    }
+
+    atualizarInfoImoveis() {
+        const totalImoveis = this.imoveis.length;
+        const startItem = (this.currentPageImoveis - 1) * this.itemsPerPageImoveis + 1;
+        const endItem = Math.min(this.currentPageImoveis * this.itemsPerPageImoveis, totalImoveis);
+        
+        const resultadosInfo = document.getElementById('imoveisResultadosInfo');
+        if (resultadosInfo) {
+            resultadosInfo.textContent = `Exibindo ${startItem}-${endItem} de ${totalImoveis} imóveis`;
+        }
+    }
+
+    irParaPaginaImoveis(pagina) {
+        if (pagina >= 1 && pagina <= this.totalPaginasImoveis) {
+            this.currentPageImoveis = pagina;
+            this.atualizarTabelaImoveis();
+        }
+    }
+
+    mostrarDetalhesImovel(id) {
+        const imovel = this.imoveis.find(i => i.id === id);
+        if (!imovel) return;
+
+        const locadoresDoImovel = this.locadores.filter(l => l.imovelId === imovel.id);
+        
+        const detalhesContent = document.getElementById('detalhesImovelContent');
+        detalhesContent.innerHTML = `
+            <div class="detalhes-section">
+                <h4>🏢 Informações Básicas</h4>
+                <div class="detalhes-grid">
+                    <div class="detalhe-item">
+                        <div class="detalhe-label">Código SIPGE/SAP</div>
+                        <div class="detalhe-valor"><strong>${imovel.codigo}</strong></div>
+                    </div>
+                    <div class="detalhe-item">
+                        <div class="detalhe-label">Denominação</div>
+                        <div class="detalhe-valor">${imovel.denominacao}</div>
+                    </div>
+                    <div class="detalhe-item">
+                        <div class="detalhe-label">Status</div>
+                        <div class="detalhe-valor">${this.formatarStatusBadge(imovel.status)}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detalhes-section">
+                <h4>📍 Localização</h4>
+                <div class="detalhes-grid">
+                    <div class="detalhe-item">
+                        <div class="detalhe-label">Cidade</div>
+                        <div class="detalhe-valor">${imovel.local}</div>
+                    </div>
+                    <div class="detalhe-item">
+                        <div class="detalhe-label">Endereço Completo</div>
+                        <div class="detalhe-valor">${imovel.endereco}</div>
+                    </div>
+                    <div class="detalhe-item">
+                        <div class="detalhe-label">CEP</div>
+                        <div class="detalhe-valor"><code>${imovel.cep}</code></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detalhes-section">
+                <h4>📅 Validade do Objeto</h4>
+                <div class="detalhes-grid">
+                    <div class="detalhe-item">
+                        <div class="detalhe-label">Início da Validade</div>
+                        <div class="detalhe-valor">${this.formatarData(imovel.inicioValidade)}</div>
+                    </div>
+                    <div class="detalhe-item">
+                        <div class="detalhe-label">Válido Até</div>
+                        <div class="detalhe-valor">${imovel.objetoValidoAte ? this.formatarData(imovel.objetoValidoAte) : '<em style="color: #999;">Não definido</em>'}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detalhes-section">
+                <h4>🏛️ Impostos e Tributos</h4>
+                <div class="detalhes-grid">
+                    <div class="detalhe-item">
+                        <div class="detalhe-label">Inscrição IPTU</div>
+                        <div class="detalhe-valor">${imovel.inscricaoIPTU || '<em style="color: #999;">Não informado</em>'}</div>
+                    </div>
+                    <div class="detalhe-item">
+                        <div class="detalhe-label">Número ITR</div>
+                        <div class="detalhe-valor">${imovel.numeroITR || '<em style="color: #999;">Não aplicável</em>'}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detalhes-section">
+                <h4>👥 Locadores Vinculados</h4>
+                <div class="detalhe-item">
+                    <div class="detalhe-label">Total de Locadores</div>
+                    <div class="detalhe-valor">
+                        <span class="count-badge ${locadoresDoImovel.length === 0 ? 'zero' : locadoresDoImovel.length < 3 ? 'few' : 'many'}">
+                            ${locadoresDoImovel.length}
+                        </span>
+                        ${locadoresDoImovel.length === 0 ? ' <em style="color: #dc3545;">⚠️ Nenhum locador cadastrado</em>' : ''}
+                    </div>
+                </div>
+                ${locadoresDoImovel.length > 0 ? `
+                    <div style="margin-top: 1rem;">
+                        <div class="detalhe-label">Lista de Locadores:</div>
+                        <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+                            ${locadoresDoImovel.map(locador => `
+                                <li style="margin-bottom: 0.5rem;">
+                                    <strong>${locador.nome}</strong> (${locador.tipo})
+                                    <br><small style="color: #666;">${locador.documento}</small>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+
+        document.getElementById('modalDetalhesImovel').style.display = 'block';
+    }
+
+    formatarData(dataString) {
+        if (!dataString) return '';
+        const data = new Date(dataString + 'T00:00:00');
+        return data.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
+    fecharModalDetalhes() {
+        document.getElementById('modalDetalhesImovel').style.display = 'none';
+    }
+
+    editarImovelModal() {
+        // Fechar modal e abrir formulário de edição
+        this.fecharModalDetalhes();
+        alert('Funcionalidade de edição será implementada.');
     }
 
     selecionarImovel(id) {

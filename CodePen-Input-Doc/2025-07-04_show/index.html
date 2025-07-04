@@ -10,7 +10,7 @@
     <header>
         <div class="header-content">
             <div class="logo-section">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40'%3E%3Crect width='100' height='40' fill='%23003f7f'/%3E%3Ctext x='50' y='25' text-anchor='middle' fill='white' font-family='Arial, sans-serif' font-size='16' font-weight='bold'%3ECAIXA%3C/text%3E%3C/svg%3E" alt="CAIXA" class="logo">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 60'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23003f7f;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23004499;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='60' fill='url(%23grad1)' rx='4'/%3E%3Ctext x='60' y='35' text-anchor='middle' fill='%23FFD700' font-family='Arial, sans-serif' font-size='18' font-weight='bold'%3ECAIXA%3C/text%3E%3Ctext x='60' y='48' text-anchor='middle' fill='white' font-family='Arial, sans-serif' font-size='8'%3EECONÔMICA FEDERAL%3C/text%3E%3C/svg%3E" alt="CAIXA" class="logo">
             </div>
             <div class="title-section">
                 <h1>SILIC 2.0 - CAIXA</h1>
@@ -154,19 +154,50 @@
             </div>
             
             <!-- Tabela de Imóveis Atualizada -->
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Denominação</th>
-                        <th>Local</th>
-                        <th>Status</th>
-                        <th>Locadores</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="tabelaImoveis"></tbody>
-            </table>
+            <div class="imoveis-table-section">
+                <div class="table-controls">
+                    <div class="table-info">
+                        <span id="imoveisResultadosInfo" class="results-info">Carregando...</span>
+                    </div>
+                    <div class="table-pagination-controls">
+                        <label>Imóveis por página:</label>
+                        <select id="imoveisPorPaginaSelect" class="select">
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Denominação</th>
+                            <th>Local</th>
+                            <th>Status</th>
+                            <th>Locadores</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaImoveis"></tbody>
+                </table>
+                
+                <div class="pagination-bar">
+                    <div class="pagination-bar-row">
+                        <div class="pagination-left">
+                            <button class="pagination-button" id="primeiraPaginaImoveis" onclick="sistema.irParaPaginaImoveis(1)">« Primeira</button>
+                            <button class="pagination-button" id="anteriorPaginaImoveis" onclick="sistema.irParaPaginaImoveis(sistema.currentPageImoveis - 1)">‹ Anterior</button>
+                        </div>
+                        <div class="pagination-center" id="imoveis-pagination-info">Página 1 de 1</div>
+                        <div class="pagination-right">
+                            <button class="pagination-button" id="proximaPaginaImoveis" onclick="sistema.irParaPaginaImoveis(sistema.currentPageImoveis + 1)">Próxima ›</button>
+                            <button class="pagination-button" id="ultimaPaginaImoveis" onclick="sistema.irParaPaginaImoveis(sistema.totalPaginasImoveis)">Última »</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Seção de Locadores -->
@@ -268,6 +299,25 @@
             </div>
         </section>
     </main>
+    
+    <!-- Modal para Detalhes do Imóvel -->
+    <div id="modalDetalhesImovel" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🏢 Detalhes do Imóvel</h3>
+                <span class="modal-close" onclick="sistema.fecharModalDetalhes()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="detalhesImovelContent">
+                    <!-- Conteúdo será preenchido dinamicamente -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="sistema.fecharModalDetalhes()">Fechar</button>
+                <button class="btn btn-primary" onclick="sistema.editarImovelModal()">Editar Imóvel</button>
+            </div>
+        </div>
+    </div>
     
     <script src="script.js"></script>
 </body>
