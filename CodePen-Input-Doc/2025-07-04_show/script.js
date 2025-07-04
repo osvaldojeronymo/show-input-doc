@@ -15,11 +15,14 @@ class SistemaSILIC {
         this.itemsPerPageImoveis = 10;
         this.totalPaginasImoveis = 1;
         
-        this.inicializar();
-        this.carregarDadosDemo();
+        // Aguardar um pouco para garantir que o DOM está carregado
+        setTimeout(() => {
+            this.inicializar();
+            this.carregarDadosDemo();
+        }, 100);
     }
 
-    inicializar() {
+    inicializar() {        
         // Inicializar eventos dos formulários
         document.getElementById('adicionarImovel')?.addEventListener('click', () => this.adicionarImovel());
         document.getElementById('limparFormulario')?.addEventListener('click', () => this.limparFormulario());
@@ -66,8 +69,6 @@ class SistemaSILIC {
     }
 
     carregarDadosDemo() {
-        console.log('Carregando dados de demonstração...');
-        
         // Gerar exatamente 100 imóveis para demonstração
         this.imoveis = this.gerarImoveisDemo(100);
         this.locadores = this.gerarLocadoresDemo();
@@ -75,10 +76,7 @@ class SistemaSILIC {
         this.atualizarDashboard();
         this.atualizarTabelaImoveis();
         
-        console.log('Dados de demonstração carregados:', {
-            imoveis: this.imoveis.length,
-            locadores: this.locadores.length
-        });
+        console.log('Dados carregados:', this.imoveis.length, 'imóveis');
     }
 
     gerarImoveisDemo(quantidade = 100) {
@@ -197,10 +195,11 @@ class SistemaSILIC {
 
                 // Para PJ, adicionar representante legal se aplicável
                 if (ehPessoaJuridica && Math.random() > 0.3) { // 70% das PJs têm representante legal
+                    const nomeRepresentante = nomes[Math.floor(Math.random() * nomes.length)];
                     locador.representanteLegal = {
-                        nome: nomes[Math.floor(Math.random() * nomes.length)],
+                        nome: nomeRepresentante,
                         cpf: this.gerarCPF(),
-                        email: this.gerarEmailDemo(locador.representanteLegal.nome),
+                        email: this.gerarEmailDemo(nomeRepresentante),
                         telefone: this.gerarTelefoneDemo(),
                         documentos: this.gerarDocumentosRepresentante()
                     };
@@ -214,10 +213,12 @@ class SistemaSILIC {
     }
 
     shuffle(array) {
-        const newArray = [...array];
+        const newArray = array.slice(); // Criar uma cópia do array
         for (let i = newArray.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            const temp = newArray[i];
+            newArray[i] = newArray[j];
+            newArray[j] = temp;
         }
         return newArray;
     }
@@ -1196,15 +1197,24 @@ ${docsPendentesTotal > 0 ? `• ${docsPendentesTotal} documentos aguardando entr
     
     configurarFiltrosImoveis() {
         // Filtro de busca em tempo real
-        document.getElementById('filtroImoveis')?.addEventListener('input', () => this.filtrarImoveis());
+        const filtroImoveis = document.getElementById('filtroImoveis');
+        if (filtroImoveis) {
+            filtroImoveis.addEventListener('input', () => this.filtrarImoveis());
+        }
         
         // Filtro por status
-        document.getElementById('filtroStatusImoveis')?.addEventListener('change', () => this.filtrarImoveis());
+        const filtroStatus = document.getElementById('filtroStatusImoveis');
+        if (filtroStatus) {
+            filtroStatus.addEventListener('change', () => this.filtrarImoveis());
+        }
     }
 
     filtrarImoveis() {
-        const termoBusca = document.getElementById('filtroImoveis')?.value.toLowerCase() || '';
-        const statusFiltro = document.getElementById('filtroStatusImoveis')?.value || '';
+        const filtroInput = document.getElementById('filtroImoveis');
+        const filtroStatusSelect = document.getElementById('filtroStatusImoveis');
+        
+        const termoBusca = filtroInput ? filtroInput.value.toLowerCase() : '';
+        const statusFiltro = filtroStatusSelect ? filtroStatusSelect.value : '';
         
         // Resetar para primeira página
         this.currentPageImoveis = 1;
@@ -1213,18 +1223,18 @@ ${docsPendentesTotal > 0 ? `• ${docsPendentesTotal} documentos aguardando entr
         let imoveisFiltrados = this.imoveis;
         
         if (termoBusca) {
-            imoveisFiltrados = imoveisFiltrados.filter(imovel => 
-                imovel.codigo.toLowerCase().includes(termoBusca) ||
-                imovel.denominacao.toLowerCase().includes(termoBusca) ||
-                imovel.local.toLowerCase().includes(termoBusca) ||
-                imovel.endereco.toLowerCase().includes(termoBusca)
-            );
+            imoveisFiltrados = imoveisFiltrados.filter(function(imovel) {
+                return imovel.codigo.toLowerCase().indexOf(termoBusca) > -1 ||
+                       imovel.denominacao.toLowerCase().indexOf(termoBusca) > -1 ||
+                       imovel.local.toLowerCase().indexOf(termoBusca) > -1 ||
+                       imovel.endereco.toLowerCase().indexOf(termoBusca) > -1;
+            });
         }
         
         if (statusFiltro) {
-            imoveisFiltrados = imoveisFiltrados.filter(imovel => 
-                imovel.status === statusFiltro
-            );
+            imoveisFiltrados = imoveisFiltrados.filter(function(imovel) {
+                return imovel.status === statusFiltro;
+            });
         }
         
         // Atualizar a propriedade temporária para paginação
@@ -1346,6 +1356,12 @@ function importarDadosReais(input) {
 
 // Inicializar sistema quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', function() {
-    window.sistema = new SistemaSILIC();
-    console.log('SILIC 2.0 - Versão Apresentação inicializado com sucesso!');
+    console.log('DOM carregado');
+    try {
+        window.sistema = new SistemaSILIC();
+        console.log('SILIC 2.0 - Versão Apresentação inicializado com sucesso!');
+        console.log('Imóveis carregados:', window.sistema.imoveis.length);
+    } catch (error) {
+        console.error('Erro ao inicializar sistema:', error);
+    }
 });
