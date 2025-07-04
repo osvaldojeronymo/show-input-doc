@@ -53,16 +53,23 @@
             </div>
             
             <!-- Ações Principais -->
-            <div class="main-actions" style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
-                <button id="btnNovoImovel" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;" onclick="sistema.mostrarFormulario()">
-                    ➕ Cadastrar Novo Edifício
-                </button>
-                <button class="btn btn-info" style="padding: 1rem 2rem;" onclick="sistema.buscarSIPGE()">
-                    🔍 Buscar no SIPGE/SAP
-                </button>
-                <button class="btn btn-warning" style="padding: 1rem 2rem;" onclick="sistema.executarAuditoriaInterface()">
-                    🔍 Auditoria de Dados
-                </button>
+            <div class="main-actions">
+                <div class="actions-primary">
+                    <button id="btnNovoImovel" class="btn btn-primary btn-action" onclick="sistema.mostrarFormulario()">
+                        <span class="btn-icon">➕</span>
+                        <span class="btn-text">Cadastrar Novo Edifício</span>
+                    </button>
+                </div>
+                <div class="actions-secondary">
+                    <button class="btn btn-info btn-action" onclick="sistema.buscarSIPGE()">
+                        <span class="btn-icon">🔍</span>
+                        <span class="btn-text">Buscar no SIPGE/SAP</span>
+                    </button>
+                    <button class="btn btn-warning btn-action" onclick="sistema.executarAuditoriaInterface()">
+                        <span class="btn-icon">�</span>
+                        <span class="btn-text">Auditoria de Dados</span>
+                    </button>
+                </div>
             </div>
             
             <!-- Formulário Expandido para Imóveis (Inicialmente Oculto) -->
@@ -153,75 +160,155 @@
                 </div>
             </div>
             
-            <!-- Filtros e Busca -->
-            <div class="search-filters" style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #dee2e6;">
-                <h3 style="margin-bottom: 1rem; color: #0066cc;">🔍 Filtros e Busca</h3>
-                <div class="filter-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
-                    <div class="form-group">
-                        <label for="filtroImoveis" class="form-label">Buscar Imóveis</label>
-                        <input type="text" id="filtroImoveis" class="form-input" placeholder="Buscar por código, denominação ou local..." style="padding: 0.75rem;">
-                        <small class="form-hint">Digite para filtrar em tempo real</small>
+            <!-- Filtros e Busca Melhorados -->
+            <div class="search-section">
+                <div class="search-header">
+                    <h3 class="search-title">
+                        <span class="search-icon">🔍</span>
+                        Buscar e Filtrar Imóveis
+                    </h3>
+                    <button class="btn btn-ghost btn-sm" onclick="sistema.limparFiltrosImoveis()" id="btnLimparFiltros">
+                        <span class="btn-icon">🗑️</span>
+                        Limpar Filtros
+                    </button>
+                </div>
+                
+                <div class="search-body">
+                    <div class="search-input-group">
+                        <div class="input-with-icon">
+                            <span class="input-icon">🔍</span>
+                            <input type="text" id="filtroImoveis" class="form-input search-input" placeholder="Digite código, denominação ou local do imóvel...">
+                        </div>
+                        <div class="search-help">
+                            <small class="form-hint">Busca em tempo real • Digite ao menos 2 caracteres</small>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="filtroStatusImoveis" class="form-label">Filtrar por Status</label>
-                        <select id="filtroStatusImoveis" class="form-select" style="padding: 0.75rem;">
-                            <option value="">Todos os status</option>
-                            <option value="Em prospecção">Em prospecção</option>
-                            <option value="Em mobilização">Em mobilização</option>
-                            <option value="Ativo">Ativo</option>
-                            <option value="Em desmobilização">Em desmobilização</option>
-                            <option value="Desativado">Desativado</option>
-                        </select>
+                    
+                    <div class="filter-group">
+                        <label for="filtroStatusImoveis" class="filter-label">Filtrar por Status</label>
+                        <div class="select-wrapper">
+                            <select id="filtroStatusImoveis" class="form-select filter-select">
+                                <option value="">🏢 Todos os status</option>
+                                <option value="Ativo">✅ Ativo</option>
+                                <option value="Em prospecção">🔍 Em prospecção</option>
+                                <option value="Em mobilização">⚡ Em mobilização</option>
+                                <option value="Em desmobilização">⬇️ Em desmobilização</option>
+                                <option value="Desativado">❌ Desativado</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
                     </div>
-                    <div class="form-group" style="display: flex; align-items: end;">
-                        <button class="btn btn-secondary" style="padding: 0.75rem 1.5rem;" onclick="sistema.limparFiltrosImoveis()">
-                            🗑️ Limpar Filtros
-                        </button>
+                </div>
+                
+                <div class="search-stats" id="searchStats" style="display: none;">
+                    <div class="stats-item">
+                        <span class="stats-number" id="filteredCount">0</span>
+                        <span class="stats-label">resultados encontrados</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Tabela de Imóveis Atualizada -->
-            <div class="imoveis-table-section">
-                <div class="table-controls">
+            <!-- Tabela de Imóveis com Controles Modernizados -->
+            <div class="table-section">
+                <div class="table-header">
                     <div class="table-info">
-                        <span id="imoveisResultadosInfo" class="results-info">Carregando...</span>
+                        <span id="imoveisResultadosInfo" class="results-info">
+                            <span class="info-icon">📊</span>
+                            <span class="info-text">Carregando dados...</span>
+                        </span>
                     </div>
                     <div class="table-pagination-controls">
-                        <label>Imóveis por página:</label>
-                        <select id="imoveisPorPaginaSelect" class="select">
-                            <option value="10" selected>10</option>
-                            <option value="20">20</option>
+                        <label>📄 Itens por página:</label>
+                        <select id="itensPorPagina" class="pagination-select">
+                            <option value="10">10</option>
+                            <option value="25" selected>25</option>
                             <option value="50">50</option>
                             <option value="100">100</option>
                         </select>
                     </div>
                 </div>
-                
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Denominação</th>
-                            <th>Local</th>
-                            <th>Status</th>
-                            <th>Locadores</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaImoveis"></tbody>
-                </table>
-                
-                <div class="pagination-bar">
-                    <div class="pagination-bar-row">
-                        <div class="pagination-left">
-                            <button class="pagination-button" id="primeiraPaginaImoveis" onclick="sistema.irParaPaginaImoveis(1)">« Primeira</button>
-                            <button class="pagination-button" id="anteriorPaginaImoveis" onclick="sistema.irParaPaginaImoveis(sistema.currentPageImoveis - 1)">‹ Anterior</button>
+                        <label class="control-label">Exibir:</label>
+                        <div class="select-wrapper compact">
+                            <select id="imoveisPorPaginaSelect" class="form-select control-select">
+                                <option value="10" selected>10 itens</option>
+                                <option value="20">20 itens</option>
+                                <option value="50">50 itens</option>
+                                <option value="100">100 itens</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
                         </div>
-                        <div class="pagination-center" id="imoveis-pagination-info">Página 1 de 1</div>
-                        <div class="pagination-right">
-                            <button class="pagination-button" id="proximaPaginaImoveis" onclick="sistema.irParaPaginaImoveis(sistema.currentPageImoveis + 1)">Próxima ›</button>
-                            <button class="pagination-button" id="ultimaPaginaImoveis" onclick="sistema.irParaPaginaImoveis(sistema.totalPaginasImoveis)">Última »</button>
+                        <span class="control-label">por página</span>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="table table-modern">
+                        <thead>
+                            <tr>
+                                <th class="th-codigo">
+                                    <span class="th-content">
+                                        <span class="th-icon">🏷️</span>
+                                        <span class="th-text">Código</span>
+                                    </span>
+                                </th>
+                                <th class="th-denominacao">
+                                    <span class="th-content">
+                                        <span class="th-icon">🏢</span>
+                                        <span class="th-text">Denominação</span>
+                                    </span>
+                                </th>
+                                <th class="th-local">
+                                    <span class="th-content">
+                                        <span class="th-icon">📍</span>
+                                        <span class="th-text">Local</span>
+                                    </span>
+                                </th>
+                                <th class="th-status">
+                                    <span class="th-content">
+                                        <span class="th-icon">📊</span>
+                                        <span class="th-text">Status</span>
+                                    </span>
+                                </th>
+                                <th class="th-locadores">
+                                    <span class="th-content">
+                                        <span class="th-icon">👥</span>
+                                        <span class="th-text">Locadores</span>
+                                    </span>
+                                </th>
+                                <th class="th-acoes">
+                                    <span class="th-content">
+                                        <span class="th-icon">⚙️</span>
+                                        <span class="th-text">Ações</span>
+                                    </span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaImoveis"></tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination-section">
+                    <div class="pagination-wrapper">
+                        <div class="pagination-info">
+                            <span id="imoveis-pagination-info" class="pagination-text">Página 1 de 1</span>
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="pagination-btn pagination-btn-first" id="primeiraPaginaImoveis" onclick="sistema.irParaPaginaImoveis(1)" title="Primeira página">
+                                <span class="btn-icon">⏮️</span>
+                                <span class="btn-text">Primeira</span>
+                            </button>
+                            <button class="pagination-btn pagination-btn-prev" id="anteriorPaginaImoveis" onclick="sistema.irParaPaginaImoveis(sistema.currentPageImoveis - 1)" title="Página anterior">
+                                <span class="btn-icon">◀️</span>
+                                <span class="btn-text">Anterior</span>
+                            </button>
+                            <button class="pagination-btn pagination-btn-next" id="proximaPaginaImoveis" onclick="sistema.irParaPaginaImoveis(sistema.currentPageImoveis + 1)" title="Próxima página">
+                                <span class="btn-text">Próxima</span>
+                                <span class="btn-icon">▶️</span>
+                            </button>
+                            <button class="pagination-btn pagination-btn-last" id="ultimaPaginaImoveis" onclick="sistema.irParaPaginaImoveis(sistema.totalPaginasImoveis)" title="Última página">
+                                <span class="btn-text">Última</span>
+                                <span class="btn-icon">⏭️</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -252,30 +339,77 @@
                 </div>
             </div>
             
-            <div class="form-group">
-                <input type="text" id="nomeLocador" class="form-input" placeholder="Nome do locador">
-                <select id="tipoLocador" class="form-select">
-                    <option value="Pessoa Física">Pessoa Física</option>
-                    <option value="Pessoa Jurídica">Pessoa Jurídica</option>
-                </select>
-                <button id="adicionarLocador" class="btn btn-primary">Adicionar Locador</button>
+            <div class="form-group" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <div style="display: grid; grid-template-columns: 2fr 1fr auto; gap: 1rem; align-items: end;">
+                    <div>
+                        <label class="filter-label">👤 Nome do Locador</label>
+                        <div class="search-input-group">
+                            <span class="search-input-icon">👤</span>
+                            <input type="text" id="nomeLocador" class="form-input search-input" placeholder="Digite o nome do locador...">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="filter-label">🏷️ Tipo</label>
+                        <div class="select-wrapper">
+                            <select id="tipoLocador" class="form-select filter-select">
+                                <option value="Pessoa Física">👤 Pessoa Física</option>
+                                <option value="Pessoa Jurídica">🏢 Pessoa Jurídica</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                    <button id="adicionarLocador" class="btn btn-primary">
+                        ➕ Adicionar Locador
+                    </button>
+                </div>
             </div>
 
-            <!-- Controles de Busca e Filtro -->
+            <!-- Controles de Busca e Filtro Modernizados -->
             <div class="search-filters" id="searchFilters" style="display: none;">
-                <div class="search-group">
-                    <input type="text" id="buscaLocador" class="form-input" placeholder="🔍 Buscar por nome...">
-                    <select id="filtroTipo" class="form-select">
-                        <option value="">Todos os tipos</option>
-                        <option value="Pessoa Física">Pessoa Física</option>
-                        <option value="Pessoa Jurídica">Pessoa Jurídica</option>
-                    </select>
-                    <select id="filtroStatus" class="form-select">
-                        <option value="">Todos os status</option>
-                        <option value="completo">Documentos Completos</option>
-                        <option value="pendente">Documentos Pendentes</option>
-                    </select>
-                    <button id="limparFiltros" class="btn btn-secondary btn-sm">Limpar</button>
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">🔍 Buscar Locador</label>
+                        <div class="search-input-group">
+                            <span class="search-input-icon">👤</span>
+                            <input type="text" id="buscaLocador" class="form-input search-input" placeholder="Buscar por nome...">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">🏷️ Tipo de Pessoa</label>
+                        <div class="select-wrapper">
+                            <select id="filtroTipo" class="form-select filter-select">
+                                <option value="">🌐 Todos os tipos</option>
+                                <option value="Pessoa Física">👤 Pessoa Física</option>
+                                <option value="Pessoa Jurídica">🏢 Pessoa Jurídica</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">📋 Status dos Documentos</label>
+                        <div class="select-wrapper">
+                            <select id="filtroStatus" class="form-select filter-select">
+                                <option value="">📄 Todos os status</option>
+                                <option value="completo">✅ Documentos Completos</option>
+                                <option value="pendente">⏳ Documentos Pendentes</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">🎯 Ações</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button id="limparFiltros" class="btn btn-secondary btn-sm">
+                                🗑️ Limpar
+                            </button>
+                            <button id="exportarLocadores" class="btn btn-info btn-sm">
+                                📊 Exportar
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -283,10 +417,17 @@
                 <p>Selecione um imóvel acima para vincular locadores.</p>
             </div>
 
-            <!-- Toggle de Visualização -->
+            <!-- Toggle de Visualização Modernizado -->
             <div class="view-toggle" id="viewToggle" style="display: none;">
-                <button id="viewTable" class="btn btn-secondary btn-sm active">📋 Tabela</button>
-                <button id="viewCards" class="btn btn-secondary btn-sm">🗂️ Cards</button>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="font-weight: 600; color: var(--color-text); font-size: 0.9rem;">👁️ Visualização:</span>
+                    <button id="viewTable" class="btn btn-secondary btn-sm active">
+                        📋 Tabela
+                    </button>
+                    <button id="viewCards" class="btn btn-secondary btn-sm">
+                        🗂️ Cards
+                    </button>
+                </div>
             </div>
             
             <!-- Tabela de Locadores com Upload de Documentos -->
@@ -308,21 +449,27 @@
                 <div class="cards-container" id="cardsContainer"></div>
             </div>
 
-            <!-- Barra de Paginação Melhorada -->
+            <!-- Barra de Paginação Modernizada -->
             <div class="pagination-bar">
                 <div class="pagination-bar-row">
                     <div class="pagination-left">
-                        Itens por página
-                        <select id="itensPorPaginaSelect" class="select">
-                            <option value="5">5</option>
-                            <option value="10" selected>10</option>
-                            <option value="20">20</option>
-                            <option value="50">50</option>
-                        </select>
-                        <span id="resultadosInfo" class="results-info"></span>
+                        <div class="page-info" id="resultadosInfo">
+                            📊 Carregando resultados...
+                        </div>
                     </div>
-                    <div class="pagination-center" id="pagination-info"></div>
-                    <div class="pagination-right" id="pagination-buttons"></div>
+                    <div class="pagination-center">
+                        <div class="page-info" id="pagination-info">
+                            Página 1 de 1
+                        </div>
+                    </div>
+                    <div class="pagination-right" id="pagination-buttons">
+                        <button class="pagination-button" disabled>
+                            ⬅️ Anterior
+                        </button>
+                        <button class="pagination-button" disabled>
+                            Próxima ➡️
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
