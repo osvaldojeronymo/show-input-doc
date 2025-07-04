@@ -1,0 +1,630 @@
+/* Estilo seguindo padrão CAIXA Econômica Federal - Versão Apresentação */
+:root {
+    --color-primary: #0066cc;        /* Azul CAIXA */
+    --color-primary-dark: #004499;   /* Azul escuro CAIXA */
+    --color-accent: #ffcc00;         /* Amarelo CAIXA */
+    --color-accent-dark: #e6b800;    /* Amarelo escuro */
+    --color-bg: #f8f9fa;
+    --color-bg-light: #f1f3f4;
+    --color-bg-hover: #e8f4f8;
+    --color-border: #dee2e6;
+    --color-white: #fff;
+    --color-black: #212529;
+    --color-text: #495057;
+    --color-success: #28a745;
+    --color-danger: #dc3545;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--color-bg);
+    margin: 0;
+}
+
+/* Header adaptado para apresentação */
+header {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    color: white;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 50px;
+    width: auto;
+}
+
+.title-section {
+    text-align: center;
+}
+
+.title-section h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+.subtitle {
+    margin: 0.5rem 0 0 0;
+    font-size: 1.2rem;
+    font-weight: 300;
+    opacity: 0.9;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+h2 {
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.table th,
+.table td {
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.table th {
+    background: var(--color-bg-light);
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.documents-cell {
+    padding: 0.75rem;
+}
+
+.document-dropbox {
+    border: 2px dashed var(--color-border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    background: var(--color-white);
+    transition: all 0.3s ease;
+}
+
+.document-dropbox.clickable {
+    border-color: var(--color-primary);
+    cursor: pointer;
+}
+
+.document-dropbox.clickable:hover {
+    border-color: var(--color-accent);
+    background: var(--color-bg-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,102,204,0.15);
+}
+
+.document-dropbox.completed {
+    border-color: var(--color-success);
+    background: #f8fff9;
+}
+
+.document-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.document-icon {
+    font-size: 1.5rem;
+    color: var(--color-accent);
+}
+
+.document-name {
+    flex: 1;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.status-indicator {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.status-indicator.entregue {
+    color: var(--color-success);
+}
+
+.status-indicator.pendente {
+    color: var(--color-danger);
+}
+
+.document-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.status-text.entregue {
+    color: var(--color-success);
+}
+
+.status-text.pendente {
+    color: var(--color-danger);
+}
+
+.upload-hint {
+    font-size: 0.8rem;
+    color: var(--color-primary);
+    font-style: italic;
+}
+
+.pagination-bar {
+    margin-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    padding-top: 1rem;
+}
+
+.pagination-bar-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.pagination-left,
+.pagination-center,
+.pagination-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.select {
+    padding: 0.3rem;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+}
+
+.pagination-button {
+    padding: 0.3rem 0.6rem;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.pagination-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Estilos para formulários */
+.form-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.form-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+}
+
+.form-select {
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: var(--color-white);
+    min-width: 150px;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: var(--color-white);
+}
+
+.btn-primary:hover {
+    background: var(--color-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+}
+
+.btn-secondary {
+    background: var(--color-border);
+    color: var(--color-text);
+}
+
+.btn-secondary:hover {
+    background: #c6cdd3;
+}
+
+.btn-info {
+    background: #17a2b8;
+    color: var(--color-white);
+}
+
+.btn-info:hover {
+    background: #138496;
+}
+
+.btn-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+}
+
+.btn-danger {
+    background: var(--color-danger);
+    color: var(--color-white);
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+/* Seções específicas */
+.cadastro-imoveis {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.locadores-section {
+    margin-top: 2rem;
+}
+
+.locadores-info {
+    padding: 1rem;
+    background: var(--color-bg-light);
+    border-radius: 4px;
+    color: var(--color-text);
+    text-align: center;
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+/* Status badges */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.status-badge.ativo {
+    background: #d4edda;
+    color: var(--color-success);
+}
+
+.status-badge.inativo {
+    background: #f8d7da;
+    color: var(--color-danger);
+}
+
+.status-badge.selecionado {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Ações da tabela */
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+/* Dashboard de Estatísticas melhorado para apresentação */
+.dashboard-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--color-white);
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+/* Ações principais melhoradas */
+.main-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.main-actions .btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    border-radius: 6px;
+}
+
+.main-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Dashboard de Estatísticas dos Locadores */
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--color-bg-light);
+    border-radius: 8px;
+}
+
+.dashboard-stats .stat-card {
+    background: var(--color-white);
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid var(--color-primary);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.dashboard-stats .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Controles de Busca e Filtro */
+.search-filters {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--color-bg-light);
+    border-radius: 8px;
+}
+
+.search-group {
+    display: grid;
+    grid-template-columns: 1fr 150px 180px auto;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Toggle de Visualização */
+.view-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    justify-content: flex-end;
+}
+
+.view-toggle .btn.active {
+    background: var(--color-primary);
+    color: var(--color-white);
+}
+
+/* Visualização em Cards */
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.locador-card {
+    background: var(--color-white);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-left: 4px solid var(--color-primary);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.locador-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Formulário expandido melhorado */
+.form-imovel-expandido {
+    background: var(--color-bg);
+    padding: 2rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: 0.9rem;
+}
+
+.form-hint {
+    font-size: 0.8rem;
+    color: var(--color-primary);
+    font-style: italic;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .logo {
+        height: 40px;
+    }
+    
+    .title-section h1 {
+        font-size: 2rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+    }
+    
+    .dashboard-overview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .main-actions {
+        flex-direction: column;
+    }
+    
+    .main-actions .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .search-group {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .cards-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin: 1rem;
+        padding: 1rem;
+    }
+    
+    .dashboard-overview {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+}

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SILIC 2.0 - CAIXA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40'%3E%3Crect width='100' height='40' fill='%23003f7f'/%3E%3Ctext x='50' y='25' text-anchor='middle' fill='white' font-family='Arial, sans-serif' font-size='16' font-weight='bold'%3ECAIXA%3C/text%3E%3C/svg%3E" alt="CAIXA" class="logo">
+            </div>
+            <div class="title-section">
+                <h1>SILIC 2.0 - CAIXA</h1>
+                <p class="subtitle">Protótipo</p>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container">
+        <!-- Seção de Cadastro de Imóveis -->
+        <section class="cadastro-imoveis">
+            <h2>📋 Gestão de Imóveis CAIXA</h2>
+            
+            <!-- Dashboard de Estatísticas -->
+            <div class="dashboard-overview" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                <div class="stat-card" style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                    <div class="stat-number" id="totalImoveis" style="font-size: 2rem; font-weight: bold; color: #1976d2;">23</div>
+                    <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Imóveis Cadastrados</div>
+                </div>
+                <div class="stat-card" style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                    <div class="stat-number" id="imoveisAtivos" style="font-size: 2rem; font-weight: bold; color: #388e3c;">15</div>
+                    <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Ativos</div>
+                </div>
+                <div class="stat-card" style="background: #fff3e0; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                    <div class="stat-number" id="imoveisProspeccao" style="font-size: 2rem; font-weight: bold; color: #f57c00;">3</div>
+                    <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Em Prospecção</div>
+                </div>
+                <div class="stat-card" style="background: #e1f5fe; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                    <div class="stat-number" id="imoveisMobilizacao" style="font-size: 2rem; font-weight: bold; color: #0288d1;">2</div>
+                    <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Em Mobilização</div>
+                </div>
+                <div class="stat-card" style="background: #fce4ec; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                    <div class="stat-number" id="imoveisDesmobilizacao" style="font-size: 2rem; font-weight: bold; color: #ad1457;">2</div>
+                    <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Em Desmobilização</div>
+                </div>
+                <div class="stat-card" style="background: #f3e5f5; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                    <div class="stat-number" id="imoveisDesativado" style="font-size: 2rem; font-weight: bold; color: #7b1fa2;">1</div>
+                    <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Desativado</div>
+                </div>
+            </div>
+            
+            <!-- Ações Principais -->
+            <div class="main-actions" style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                <button id="btnNovoImovel" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;" onclick="sistema.mostrarFormulario()">
+                    ➕ Cadastrar Novo Edifício
+                </button>
+                <button class="btn btn-info" style="padding: 1rem 2rem;" onclick="sistema.buscarSIPGE()">
+                    🔍 Buscar no SIPGE/SAP
+                </button>
+                <button class="btn btn-warning" style="padding: 1rem 2rem;" onclick="sistema.executarAuditoriaInterface()">
+                    🔍 Auditoria de Dados
+                </button>
+            </div>
+            
+            <!-- Formulário Expandido para Imóveis (Inicialmente Oculto) -->
+            <div class="form-imovel-expandido" id="formularioImovel" style="background: #f8f9fa; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; display: none;">
+                <h3 style="margin-bottom: 1.5rem; color: #0066cc;">🏢 Informações do Edifício</h3>
+                
+                <div class="form-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label for="codigoEdificio" class="form-label">Código do Edifício (SIPGE/SAP)*</label>
+                        <input type="text" id="codigoEdificio" class="form-input" placeholder="20000000" pattern="2000[0-9]{4}" maxlength="8" required>
+                        <small class="form-hint">8 dígitos, inicia com 2000</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="statusImovel" class="form-label">Status do Imóvel*</label>
+                        <select id="statusImovel" class="form-select" required>
+                            <option value="">Selecione o status</option>
+                            <option value="Em prospecção">Em prospecção</option>
+                            <option value="Em mobilização">Em mobilização</option>
+                            <option value="Ativo">Ativo</option>
+                            <option value="Em desmobilização">Em desmobilização</option>
+                            <option value="Desativado">Desativado</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="denominacaoEdificio" class="form-label">Denominação do Edifício*</label>
+                        <input type="text" id="denominacaoEdificio" class="form-input" placeholder="ED - Nome da Unidade, UF" required>
+                        <small class="form-hint">Formato: ED - nome da unidade, UF</small>
+                    </div>
+                </div>
+                
+                <h4 style="margin: 1.5rem 0 1rem 0; color: #0066cc;">📍 Localização</h4>
+                
+                <div class="form-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label for="localCidade" class="form-label">Local (Cidade)*</label>
+                        <input type="text" id="localCidade" class="form-input" placeholder="Nome da cidade" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ruaEndereco" class="form-label">Rua/Endereço Completo*</label>
+                        <input type="text" id="ruaEndereco" class="form-input" placeholder="Nome da rua, número, complemento" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cepImovel" class="form-label">CEP*</label>
+                        <input type="text" id="cepImovel" class="form-input" placeholder="00000-000" pattern="[0-9]{5}-[0-9]{3}" maxlength="9" required>
+                        <small class="form-hint">Formato: 99999-999</small>
+                    </div>
+                </div>
+                
+                <h4 style="margin: 1.5rem 0 1rem 0; color: #0066cc;">📅 Validade do Objeto</h4>
+                
+                <div class="form-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label for="inicioValidadeObj" class="form-label">Início Validade Obj.*</label>
+                        <input type="date" id="inicioValidadeObj" class="form-input" required readonly>
+                        <small class="form-hint">Gerado automaticamente pelo SIPGE/SAP</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="objetoValidoAte" class="form-label">Objeto Válido Até</label>
+                        <input type="date" id="objetoValidoAte" class="form-input">
+                        <small class="form-hint">Preenchido no momento da baixa</small>
+                    </div>
+                </div>
+                
+                <h4 style="margin: 1.5rem 0 1rem 0; color: #0066cc;">🏛️ Impostos e Tributos</h4>
+                
+                <div class="form-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="form-group">
+                        <label for="inscricaoIPTU" class="form-label">Inscrição do IPTU</label>
+                        <input type="text" id="inscricaoIPTU" class="form-input" placeholder="Campo alfanumérico">
+                        <small class="form-hint">Aceita letras e números</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="numeroITR" class="form-label">Nº ITR</label>
+                        <input type="text" id="numeroITR" class="form-input" placeholder="Campo alfanumérico">
+                        <small class="form-hint">Aceita letras e números</small>
+                    </div>
+                </div>
+                
+                <div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" id="limparFormulario" class="btn btn-secondary">🗑️ Limpar</button>
+                    <button type="button" id="adicionarImovel" class="btn btn-primary">➕ Cadastrar Imóvel</button>
+                </div>
+            </div>
+            
+            <!-- Tabela de Imóveis Atualizada -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Denominação</th>
+                        <th>Local</th>
+                        <th>Status</th>
+                        <th>Locadores</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaImoveis"></tbody>
+            </table>
+        </section>
+
+        <!-- Seção de Locadores -->
+        <section class="locadores-section">
+            <h2>Locadores vinculados ao imóvel selecionado</h2>
+            
+            <!-- Dashboard de Estatísticas -->
+            <div class="dashboard-stats" id="dashboardStats" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalLocadores">0</div>
+                    <div class="stat-label">Total Locadores</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="docsCompletos">0</div>
+                    <div class="stat-label">Docs Completos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="docsPendentes">0</div>
+                    <div class="stat-label">Docs Pendentes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="progressoGeral">0%</div>
+                    <div class="stat-label">Progresso Geral</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" id="nomeLocador" class="form-input" placeholder="Nome do locador">
+                <select id="tipoLocador" class="form-select">
+                    <option value="Pessoa Física">Pessoa Física</option>
+                    <option value="Pessoa Jurídica">Pessoa Jurídica</option>
+                </select>
+                <button id="adicionarLocador" class="btn btn-primary">Adicionar Locador</button>
+            </div>
+
+            <!-- Controles de Busca e Filtro -->
+            <div class="search-filters" id="searchFilters" style="display: none;">
+                <div class="search-group">
+                    <input type="text" id="buscaLocador" class="form-input" placeholder="🔍 Buscar por nome...">
+                    <select id="filtroTipo" class="form-select">
+                        <option value="">Todos os tipos</option>
+                        <option value="Pessoa Física">Pessoa Física</option>
+                        <option value="Pessoa Jurídica">Pessoa Jurídica</option>
+                    </select>
+                    <select id="filtroStatus" class="form-select">
+                        <option value="">Todos os status</option>
+                        <option value="completo">Documentos Completos</option>
+                        <option value="pendente">Documentos Pendentes</option>
+                    </select>
+                    <button id="limparFiltros" class="btn btn-secondary btn-sm">Limpar</button>
+                </div>
+            </div>
+            
+            <div class="locadores-info">
+                <p>Selecione um imóvel acima para vincular locadores.</p>
+            </div>
+
+            <!-- Toggle de Visualização -->
+            <div class="view-toggle" id="viewToggle" style="display: none;">
+                <button id="viewTable" class="btn btn-secondary btn-sm active">📋 Tabela</button>
+                <button id="viewCards" class="btn btn-secondary btn-sm">🗂️ Cards</button>
+            </div>
+            
+            <!-- Tabela de Locadores com Upload de Documentos -->
+            <div id="tableView">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Documentos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaLocadores"></tbody>
+                </table>
+            </div>
+
+            <!-- Visualização em Cards -->
+            <div id="cardsView" style="display: none;">
+                <div class="cards-container" id="cardsContainer"></div>
+            </div>
+
+            <!-- Barra de Paginação Melhorada -->
+            <div class="pagination-bar">
+                <div class="pagination-bar-row">
+                    <div class="pagination-left">
+                        Itens por página
+                        <select id="itensPorPaginaSelect" class="select">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                        </select>
+                        <span id="resultadosInfo" class="results-info"></span>
+                    </div>
+                    <div class="pagination-center" id="pagination-info"></div>
+                    <div class="pagination-right" id="pagination-buttons"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <script src="script.js"></script>
+</body>
+</html>
