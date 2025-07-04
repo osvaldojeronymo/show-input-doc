@@ -10,7 +10,7 @@
     <header>
         <div class="header-content">
             <div class="logo-section">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 60'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23003f7f;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23004499;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='60' fill='url(%23grad1)' rx='4'/%3E%3Ctext x='60' y='35' text-anchor='middle' fill='%23FFD700' font-family='Arial, sans-serif' font-size='18' font-weight='bold'%3ECAIXA%3C/text%3E%3Ctext x='60' y='48' text-anchor='middle' fill='white' font-family='Arial, sans-serif' font-size='8'%3EECONÔMICA FEDERAL%3C/text%3E%3C/svg%3E" alt="CAIXA" class="logo">
+                <img src="logo-caixa.svg" alt="CAIXA" class="logo">
             </div>
             <div class="title-section">
                 <h1>SILIC 2.0 - CAIXA</h1>
@@ -27,27 +27,27 @@
             <!-- Dashboard de Estatísticas -->
             <div class="dashboard-overview" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
                 <div class="stat-card" style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; text-align: center;">
-                    <div class="stat-number" id="totalImoveis" style="font-size: 2rem; font-weight: bold; color: #1976d2;">23</div>
+                    <div class="stat-number" id="totalImoveis" style="font-size: 2rem; font-weight: bold; color: #1976d2;">100</div>
                     <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Imóveis Cadastrados</div>
                 </div>
                 <div class="stat-card" style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; text-align: center;">
-                    <div class="stat-number" id="imoveisAtivos" style="font-size: 2rem; font-weight: bold; color: #388e3c;">15</div>
+                    <div class="stat-number" id="imoveisAtivos" style="font-size: 2rem; font-weight: bold; color: #388e3c;">65</div>
                     <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Ativos</div>
                 </div>
                 <div class="stat-card" style="background: #fff3e0; padding: 1.5rem; border-radius: 8px; text-align: center;">
-                    <div class="stat-number" id="imoveisProspeccao" style="font-size: 2rem; font-weight: bold; color: #f57c00;">3</div>
+                    <div class="stat-number" id="imoveisProspeccao" style="font-size: 2rem; font-weight: bold; color: #f57c00;">15</div>
                     <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Em Prospecção</div>
                 </div>
                 <div class="stat-card" style="background: #e1f5fe; padding: 1.5rem; border-radius: 8px; text-align: center;">
-                    <div class="stat-number" id="imoveisMobilizacao" style="font-size: 2rem; font-weight: bold; color: #0288d1;">2</div>
+                    <div class="stat-number" id="imoveisMobilizacao" style="font-size: 2rem; font-weight: bold; color: #0288d1;">10</div>
                     <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Em Mobilização</div>
                 </div>
                 <div class="stat-card" style="background: #fce4ec; padding: 1.5rem; border-radius: 8px; text-align: center;">
-                    <div class="stat-number" id="imoveisDesmobilizacao" style="font-size: 2rem; font-weight: bold; color: #ad1457;">2</div>
+                    <div class="stat-number" id="imoveisDesmobilizacao" style="font-size: 2rem; font-weight: bold; color: #ad1457;">8</div>
                     <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Em Desmobilização</div>
                 </div>
                 <div class="stat-card" style="background: #f3e5f5; padding: 1.5rem; border-radius: 8px; text-align: center;">
-                    <div class="stat-number" id="imoveisDesativado" style="font-size: 2rem; font-weight: bold; color: #7b1fa2;">1</div>
+                    <div class="stat-number" id="imoveisDesativado" style="font-size: 2rem; font-weight: bold; color: #7b1fa2;">2</div>
                     <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Desativado</div>
                 </div>
             </div>
@@ -153,6 +153,34 @@
                 </div>
             </div>
             
+            <!-- Filtros e Busca -->
+            <div class="search-filters" style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #dee2e6;">
+                <h3 style="margin-bottom: 1rem; color: #0066cc;">🔍 Filtros e Busca</h3>
+                <div class="filter-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div class="form-group">
+                        <label for="filtroImoveis" class="form-label">Buscar Imóveis</label>
+                        <input type="text" id="filtroImoveis" class="form-input" placeholder="Buscar por código, denominação ou local..." style="padding: 0.75rem;">
+                        <small class="form-hint">Digite para filtrar em tempo real</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroStatusImoveis" class="form-label">Filtrar por Status</label>
+                        <select id="filtroStatusImoveis" class="form-select" style="padding: 0.75rem;">
+                            <option value="">Todos os status</option>
+                            <option value="Em prospecção">Em prospecção</option>
+                            <option value="Em mobilização">Em mobilização</option>
+                            <option value="Ativo">Ativo</option>
+                            <option value="Em desmobilização">Em desmobilização</option>
+                            <option value="Desativado">Desativado</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: end;">
+                        <button class="btn btn-secondary" style="padding: 0.75rem 1.5rem;" onclick="sistema.limparFiltrosImoveis()">
+                            🗑️ Limpar Filtros
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Tabela de Imóveis Atualizada -->
             <div class="imoveis-table-section">
                 <div class="table-controls">

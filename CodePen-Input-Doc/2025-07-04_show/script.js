@@ -29,11 +29,14 @@ class SistemaSILIC {
         document.getElementById('viewTable')?.addEventListener('click', () => this.alterarVisualizacao('table'));
         document.getElementById('viewCards')?.addEventListener('click', () => this.alterarVisualizacao('cards'));
         
-        // Filtros e busca
+        // Filtros e busca de locadores
         document.getElementById('buscaLocador')?.addEventListener('input', () => this.filtrarLocadores());
         document.getElementById('filtroTipo')?.addEventListener('change', () => this.filtrarLocadores());
         document.getElementById('filtroStatus')?.addEventListener('change', () => this.filtrarLocadores());
         document.getElementById('limparFiltros')?.addEventListener('click', () => this.limparFiltros());
+        
+        // Filtros e busca de imóveis
+        this.configurarFiltrosImoveis();
         
         // Paginação de locadores
         document.getElementById('itensPorPaginaSelect')?.addEventListener('change', (e) => {
@@ -65,8 +68,8 @@ class SistemaSILIC {
     carregarDadosDemo() {
         console.log('Carregando dados de demonstração...');
         
-        // Gerar dados em massa para demonstrar performance com muitos imóveis
-        this.imoveis = this.gerarImoveisDemo(4500); // Simular mais de 4.000 imóveis
+        // Gerar exatamente 100 imóveis para demonstração
+        this.imoveis = this.gerarImoveisDemo(100);
         this.locadores = this.gerarLocadoresDemo();
         
         this.atualizarDashboard();
@@ -78,7 +81,7 @@ class SistemaSILIC {
         });
     }
 
-    gerarImoveisDemo(quantidade = 4500) {
+    gerarImoveisDemo(quantidade = 100) {
         const cidades = [
             'São Paulo', 'Rio de Janeiro', 'Brasília', 'Salvador', 'Fortaleza', 'Belo Horizonte',
             'Manaus', 'Curitiba', 'Recife', 'Goiânia', 'Belém', 'Porto Alegre', 'Guarulhos',
@@ -88,44 +91,51 @@ class SistemaSILIC {
             'Sorocaba', 'Aracaju', 'Feira de Santana', 'Cuiabá', 'Joinville', 'Juiz de Fora',
             'Londrina', 'Aparecida de Goiânia', 'Niterói', 'Belford Roxo', 'Caxias do Sul',
             'Campos dos Goytacazes', 'Macapá', 'Vila Velha', 'São João de Meriti', 'Florianópolis',
-            'Santos', 'Ribeirão Preto', 'Vitória', 'Serra', 'Diadema', 'Carapicuíba',
-            'Mauá', 'São Vicente', 'Olinda', 'Franca', 'Petrópolis', 'Canoas', 'Paulista',
-            'Cascavel', 'Piracicaba', 'Blumenau', 'Maringá', 'Cariacica', 'Taubaté',
-            'São Carlos', 'Suzano', 'Jundiaí', 'Uberaba', 'Anápolis', 'Presidente Prudente'
+            'Santos', 'Ribeirão Preto', 'Vitória', 'Serra', 'Diadema'
         ];
 
-        const status = ['Ativo', 'Em prospecção', 'Em mobilização', 'Em desmobilização', 'Desativado'];
-        const statusWeights = [0.65, 0.15, 0.10, 0.08, 0.02]; // Pesos para distribuição realista
+        // Distribuição realista de status para exatamente 100 imóveis
+        const statusDistribuicao = [
+            { status: 'Ativo', quantidade: 65 },
+            { status: 'Em prospecção', quantidade: 15 },
+            { status: 'Em mobilização', quantidade: 10 },
+            { status: 'Em desmobilização', quantidade: 8 },
+            { status: 'Desativado', quantidade: 2 }
+        ];
 
         const imoveis = [];
+        let id = 1;
 
-        for (let i = 1; i <= quantidade; i++) {
-            const cidade = cidades[Math.floor(Math.random() * cidades.length)];
-            const uf = this.obterUFPorCidade(cidade);
-            const statusIndex = this.escolherComPeso(statusWeights);
-            const codigo = `2000${String(i).padStart(4, '0')}`;
-            
-            // Gerar datas realistas
-            const inicioValidade = this.gerarDataAleatoria('2022-01-01', '2023-12-31');
-            let objetoValidoAte = null;
-            if (status[statusIndex] === 'Desativado' || status[statusIndex] === 'Em desmobilização') {
-                objetoValidoAte = this.gerarDataAleatoria('2023-06-01', '2024-12-31');
+        statusDistribuicao.forEach(dist => {
+            for (let i = 0; i < dist.quantidade; i++) {
+                const cidade = cidades[Math.floor(Math.random() * cidades.length)];
+                const uf = this.obterUFPorCidade(cidade);
+                const codigo = `2000${String(id).padStart(4, '0')}`;
+                
+                // Gerar datas realistas
+                const inicioValidade = this.gerarDataAleatoria('2022-01-01', '2023-12-31');
+                let objetoValidoAte = null;
+                if (dist.status === 'Desativado' || dist.status === 'Em desmobilização') {
+                    objetoValidoAte = this.gerarDataAleatoria('2023-06-01', '2024-12-31');
+                }
+
+                imoveis.push({
+                    id: id,
+                    codigo: codigo,
+                    denominacao: `ED - CAIXA ${cidade} ${this.gerarComplementoEndereco()}, ${uf}`,
+                    local: cidade,
+                    endereco: this.gerarEnderecoAleatorio(),
+                    cep: this.gerarCEPAleatorio(),
+                    status: dist.status,
+                    inicioValidade: inicioValidade,
+                    objetoValidoAte: objetoValidoAte,
+                    inscricaoIPTU: this.gerarInscricaoIPTU(),
+                    numeroITR: Math.random() > 0.8 ? this.gerarNumeroITR() : null
+                });
+                
+                id++;
             }
-
-            imoveis.push({
-                id: i,
-                codigo: codigo,
-                denominacao: `ED - CAIXA ${cidade} ${this.gerarComplementoEndereco()}, ${uf}`,
-                local: cidade,
-                endereco: this.gerarEnderecoAleatorio(),
-                cep: this.gerarCEPAleatorio(),
-                status: status[statusIndex],
-                inicioValidade: inicioValidade,
-                objetoValidoAte: objetoValidoAte,
-                inscricaoIPTU: this.gerarInscricaoIPTU(),
-                numeroITR: Math.random() > 0.8 ? this.gerarNumeroITR() : null
-            });
-        }
+        });
 
         return imoveis;
     }
@@ -138,40 +148,65 @@ class SistemaSILIC {
             'Gustavo Ribeiro', 'Patrícia Martins', 'Alexandre Santos', 'Marcos Vieira',
             'Priscila Gomes', 'Rodrigo Barbosa', 'Luciana Fernandes', 'Diego Carvalho',
             'Isabela Mendes', 'Thiago Araújo', 'Vanessa Dias', 'Felipe Nascimento',
-            'Aline Cardoso', 'Leonardo Pinto', 'Bianca Torres', 'Mateus Correia'
+            'Aline Cardoso', 'Leonardo Pinto', 'Bianca Torres', 'Mateus Correia',
+            'José Carlos Pereira', 'Amanda Silva', 'Ricardo Oliveira', 'Tatiana Campos'
         ];
 
         const empresas = [
-            'Construtora ABC Ltda', 'Imobiliária Prime', 'Incorporadora', 'Construções',
-            'Empreendimentos', 'Imóveis e Cia', 'Construtora Silva', 'Imobiliária Santos',
-            'Edificações Modernas', 'Construtech', 'Imóveis Premium', 'Construtora União'
+            'Construtora ABC Ltda', 'Imobiliária Prime', 'Incorporadora Moderna',
+            'Construções Sul S.A.', 'Empreendimentos Norte', 'Imóveis e Cia Ltda',
+            'Construtora Silva e Filhos', 'Imobiliária Santos', 'Edificações Modernas S.A.',
+            'Construtech Engenharia', 'Imóveis Premium Ltda', 'Construtora União',
+            'Incorporadora Horizonte', 'Construtora Central', 'Imobiliária Paulista'
         ];
 
         const locadores = [];
         let idCounter = 1;
 
-        // Gerar locadores para uma amostra dos imóveis (não todos para simular realismo)
-        const imoveisComLocadores = this.shuffle(this.imoveis.slice(0, 100)); // Apenas os primeiros 100 para performance
-
-        imoveisComLocadores.forEach((imovel, index) => {
-            if (index < 80) { // 80% dos imóveis terão locadores
-                const numeroLocadores = Math.floor(Math.random() * 4) + 1; // 1 a 4 locadores por imóvel
+        this.imoveis.forEach(imovel => {
+            // Regra: apenas imóveis com status 'Em prospecção' ou 'Em mobilização' podem não ter locadores
+            const podeNaoTerLocadores = imovel.status === 'Em prospecção' || imovel.status === 'Em mobilização';
+            
+            let numeroLocadores;
+            if (podeNaoTerLocadores) {
+                // 30% de chance de não ter locadores para estes status
+                numeroLocadores = Math.random() < 0.3 ? 0 : Math.floor(Math.random() * 3) + 1; // 0 a 3 locadores
+            } else {
+                // Demais status sempre têm pelo menos 1 locador
+                numeroLocadores = Math.floor(Math.random() * 3) + 1; // 1 a 3 locadores
+            }
+            
+            for (let i = 0; i < numeroLocadores; i++) {
+                const ehPessoaJuridica = Math.random() > 0.6; // 40% PJ, 60% PF
+                const nome = ehPessoaJuridica ? 
+                    empresas[Math.floor(Math.random() * empresas.length)] :
+                    nomes[Math.floor(Math.random() * nomes.length)];
                 
-                for (let i = 0; i < numeroLocadores; i++) {
-                    const ehPessoaJuridica = Math.random() > 0.7;
-                    const nome = ehPessoaJuridica ? 
-                        empresas[Math.floor(Math.random() * empresas.length)] + ' ' + Math.floor(Math.random() * 999) :
-                        nomes[Math.floor(Math.random() * nomes.length)];
-                    
-                    locadores.push({
-                        id: idCounter++,
-                        nome: nome,
-                        tipo: ehPessoaJuridica ? 'Pessoa Jurídica' : 'Pessoa Física',
-                        imovelId: imovel.id,
-                        documento: this.gerarDocumentoDemo(ehPessoaJuridica ? 'Pessoa Jurídica' : 'Pessoa Física'),
-                        documentos: this.gerarDocumentosDemo()
-                    });
+                const locador = {
+                    id: idCounter++,
+                    nome: nome,
+                    tipo: ehPessoaJuridica ? 'Pessoa Jurídica' : 'Pessoa Física',
+                    imovelId: imovel.id,
+                    documento: this.gerarDocumentoDemo(ehPessoaJuridica ? 'Pessoa Jurídica' : 'Pessoa Física'),
+                    email: this.gerarEmailDemo(nome),
+                    telefone: this.gerarTelefoneDemo(),
+                    endereco: this.gerarEnderecoAleatorio(),
+                    cep: this.gerarCEPAleatorio(),
+                    documentos: this.gerarDocumentosCompletos(ehPessoaJuridica)
+                };
+
+                // Para PJ, adicionar representante legal se aplicável
+                if (ehPessoaJuridica && Math.random() > 0.3) { // 70% das PJs têm representante legal
+                    locador.representanteLegal = {
+                        nome: nomes[Math.floor(Math.random() * nomes.length)],
+                        cpf: this.gerarCPF(),
+                        email: this.gerarEmailDemo(locador.representanteLegal.nome),
+                        telefone: this.gerarTelefoneDemo(),
+                        documentos: this.gerarDocumentosRepresentante()
+                    };
                 }
+
+                locadores.push(locador);
             }
         });
 
@@ -398,6 +433,12 @@ class SistemaSILIC {
     }
 
     atualizarTabelaImoveis() {
+        // Se há filtros ativos, usar a função filtrada
+        if (this.imoveisFiltrados) {
+            this.atualizarTabelaImoveisFiltrados();
+            return;
+        }
+
         const tbody = document.getElementById('tabelaImoveis');
         if (!tbody) return;
 
@@ -1022,6 +1063,271 @@ ${docsPendentesTotal > 0 ? `• ${docsPendentesTotal} documentos aguardando entr
         `;
         
         alert(relatorio);
+    }
+
+    // === NOVAS FUNÇÕES DE DOCUMENTAÇÃO COMPLETA ===
+    
+    gerarEmailDemo(nome) {
+        if (!nome) nome = 'usuario';
+        const email = nome.toLowerCase()
+            .replace(/\s+/g, '.')
+            .replace(/[^a-z0-9.]/g, '')
+            .replace(/\.+/g, '.');
+        
+        const dominios = ['gmail.com', 'hotmail.com', 'yahoo.com.br', 'outlook.com', 'empresa.com.br'];
+        const dominio = dominios[Math.floor(Math.random() * dominios.length)];
+        
+        return `${email}@${dominio}`;
+    }
+
+    gerarTelefoneDemo() {
+        const ddd = Math.floor(Math.random() * 89) + 11; // DDDs de 11 a 99
+        const numero = Math.floor(Math.random() * 900000000) + 100000000; // 9 dígitos
+        return `(${ddd}) ${numero.toString().replace(/(\d{5})(\d{4})/, '$1-$2')}`;
+    }
+
+    gerarCPF() {
+        const numbers = [];
+        for (let i = 0; i < 9; i++) {
+            numbers.push(Math.floor(Math.random() * 10));
+        }
+        
+        // Calcular dígitos verificadores
+        let sum = numbers.reduce((acc, num, idx) => acc + num * (10 - idx), 0);
+        let digit1 = 11 - (sum % 11);
+        if (digit1 >= 10) digit1 = 0;
+        numbers.push(digit1);
+        
+        sum = numbers.reduce((acc, num, idx) => acc + num * (11 - idx), 0);
+        let digit2 = 11 - (sum % 11);
+        if (digit2 >= 10) digit2 = 0;
+        numbers.push(digit2);
+        
+        return numbers.join('').replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    }
+
+    gerarDocumentosCompletos(ehPessoaJuridica) {
+        const gerarStatus = () => {
+            const rand = Math.random();
+            if (rand < 0.7) return 'entregue';
+            if (rand < 0.85) return 'pendente';
+            if (rand < 0.95) return 'em_analise';
+            return 'rejeitado';
+        };
+
+        if (ehPessoaJuridica) {
+            return {
+                // Documentos obrigatórios para PJ
+                'Contrato Social': gerarStatus(),
+                'CNPJ': gerarStatus(),
+                'Inscrição Estadual': gerarStatus(),
+                'Certidão Negativa Federal': gerarStatus(),
+                'Certidão Negativa Estadual': gerarStatus(),
+                'Certidão Negativa Municipal': gerarStatus(),
+                'Balanço Patrimonial': gerarStatus(),
+                'DRE - Demonstração do Resultado': gerarStatus(),
+                'Certidão de Regularidade FGTS': gerarStatus(),
+                'Certidão de Regularidade INSS': gerarStatus(),
+                'Procuração': Math.random() > 0.5 ? gerarStatus() : null,
+                'Declaração de Idoneidade': gerarStatus(),
+                'Comprovante de Endereço da Empresa': gerarStatus(),
+                'Ata de Nomeação de Diretoria': Math.random() > 0.4 ? gerarStatus() : null,
+                'Cartão CNPJ': gerarStatus()
+            };
+        } else {
+            return {
+                // Documentos obrigatórios para PF
+                'RG': gerarStatus(),
+                'CPF': gerarStatus(),
+                'Comprovante de Renda': gerarStatus(),
+                'Comprovante de Residência': gerarStatus(),
+                'Declaração IR': Math.random() > 0.3 ? gerarStatus() : null,
+                'Carteira de Trabalho': Math.random() > 0.4 ? gerarStatus() : null,
+                'Certidão de Nascimento': Math.random() > 0.6 ? gerarStatus() : null,
+                'Certidão de Casamento': Math.random() > 0.7 ? gerarStatus() : null,
+                'Comprovante Bancário': gerarStatus(),
+                'Declaração de Bens': Math.random() > 0.5 ? gerarStatus() : null,
+                'Ficha Cadastral': gerarStatus(),
+                'Contrato de Trabalho': Math.random() > 0.6 ? gerarStatus() : null
+            };
+        }
+    }
+
+    gerarDocumentosRepresentante() {
+        const gerarStatus = () => {
+            const rand = Math.random();
+            if (rand < 0.8) return 'entregue';
+            if (rand < 0.95) return 'pendente';
+            return 'em_analise';
+        };
+
+        return {
+            'RG do Representante': gerarStatus(),
+            'CPF do Representante': gerarStatus(),
+            'Procuração': gerarStatus(),
+            'Comprovante de Residência do Representante': gerarStatus(),
+            'Termo de Responsabilidade': Math.random() > 0.3 ? gerarStatus() : null
+        };
+    }
+
+    gerarDocumentosImovel() {
+        const gerarStatus = () => {
+            const rand = Math.random();
+            if (rand < 0.75) return 'entregue';
+            if (rand < 0.9) return 'pendente';
+            return 'em_analise';
+        };
+
+        return {
+            'Escritura do Imóvel': gerarStatus(),
+            'Matrícula do Imóvel': gerarStatus(),
+            'IPTU': gerarStatus(),
+            'Certidão Negativa de Débitos': gerarStatus(),
+            'Planta do Imóvel': Math.random() > 0.4 ? gerarStatus() : null,
+            'Habite-se': Math.random() > 0.3 ? gerarStatus() : null,
+            'Alvará de Funcionamento': Math.random() > 0.5 ? gerarStatus() : null,
+            'Laudo de Avaliação': gerarStatus(),
+            'Certidão de Regularidade Urbana': Math.random() > 0.6 ? gerarStatus() : null,
+            'Memorial Descritivo': Math.random() > 0.7 ? gerarStatus() : null
+        };
+    }
+
+    // === FILTROS E BUSCA DE IMÓVEIS ===
+    
+    configurarFiltrosImoveis() {
+        // Filtro de busca em tempo real
+        document.getElementById('filtroImoveis')?.addEventListener('input', () => this.filtrarImoveis());
+        
+        // Filtro por status
+        document.getElementById('filtroStatusImoveis')?.addEventListener('change', () => this.filtrarImoveis());
+    }
+
+    filtrarImoveis() {
+        const termoBusca = document.getElementById('filtroImoveis')?.value.toLowerCase() || '';
+        const statusFiltro = document.getElementById('filtroStatusImoveis')?.value || '';
+        
+        // Resetar para primeira página
+        this.currentPageImoveis = 1;
+        
+        // Aplicar filtros
+        let imoveisFiltrados = this.imoveis;
+        
+        if (termoBusca) {
+            imoveisFiltrados = imoveisFiltrados.filter(imovel => 
+                imovel.codigo.toLowerCase().includes(termoBusca) ||
+                imovel.denominacao.toLowerCase().includes(termoBusca) ||
+                imovel.local.toLowerCase().includes(termoBusca) ||
+                imovel.endereco.toLowerCase().includes(termoBusca)
+            );
+        }
+        
+        if (statusFiltro) {
+            imoveisFiltrados = imoveisFiltrados.filter(imovel => 
+                imovel.status === statusFiltro
+            );
+        }
+        
+        // Atualizar a propriedade temporária para paginação
+        this.imoveisFiltrados = imoveisFiltrados;
+        
+        this.atualizarTabelaImoveisFiltrados();
+    }
+
+    atualizarTabelaImoveisFiltrados() {
+        const tbody = document.getElementById('tabelaImoveis');
+        if (!tbody) return;
+
+        tbody.innerHTML = '';
+        
+        const imoveisParaExibir = this.imoveisFiltrados || this.imoveis;
+
+        // Calcular paginação
+        this.totalPaginasImoveis = Math.ceil(imoveisParaExibir.length / this.itemsPerPageImoveis);
+        const startIndex = (this.currentPageImoveis - 1) * this.itemsPerPageImoveis;
+        const endIndex = startIndex + this.itemsPerPageImoveis;
+        const imoveisPagina = imoveisParaExibir.slice(startIndex, endIndex);
+
+        imoveisPagina.forEach(imovel => {
+            const locadoresDoImovel = this.locadores.filter(l => l.imovelId === imovel.id);
+            const quantidadeLocadores = locadoresDoImovel.length;
+            
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td><strong>${imovel.codigo}</strong></td>
+                <td>
+                    <div style="max-width: 250px; word-wrap: break-word;">
+                        ${imovel.denominacao}
+                    </div>
+                </td>
+                <td>${imovel.local}</td>
+                <td>${this.formatarStatusBadge(imovel.status)}</td>
+                <td>
+                    <div class="locadores-count">
+                        <span class="count-badge ${quantidadeLocadores === 0 ? 'zero' : quantidadeLocadores < 3 ? 'few' : 'many'}">
+                            ${quantidadeLocadores}
+                        </span>
+                        ${quantidadeLocadores === 0 ? '<span class="warning-icon">⚠️</span>' : ''}
+                    </div>
+                    ${quantidadeLocadores === 0 ? '<div class="action-warning">Nenhum locador cadastrado</div>' : ''}
+                </td>
+                <td>
+                    <div class="table-actions">
+                        <button class="btn btn-sm btn-info" onclick="sistema.mostrarDetalhesImovel(${imovel.id})" title="Ver detalhes completos">
+                            📋 Detalhar
+                        </button>
+                        <button class="btn btn-sm btn-primary" onclick="sistema.selecionarImovel(${imovel.id})" title="Selecionar para gerenciar locadores">
+                            ${this.imovelSelecionado?.id === imovel.id ? '✓ Selecionado' : '👥 Locadores'}
+                        </button>
+                        <button class="btn btn-sm btn-secondary" onclick="sistema.editarImovel(${imovel.id})" title="Editar imóvel">
+                            ✏️ Editar
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="sistema.removerImovel(${imovel.id})" title="Remover imóvel">
+                            🗑️ Remover
+                        </button>
+                    </div>
+                </td>
+            `;
+
+            // Adicionar classe de destaque se não tiver locadores
+            if (quantidadeLocadores === 0) {
+                row.classList.add('imovel-warning');
+            }
+            
+            // Destacar imóvel selecionado
+            if (this.imovelSelecionado?.id === imovel.id) {
+                row.style.backgroundColor = '#e3f2fd';
+                row.style.borderLeft = '4px solid var(--color-primary)';
+            }
+        });
+
+        this.atualizarPaginacaoImoveis();
+        this.atualizarInfoImoveisFiltrados();
+    }
+
+    atualizarInfoImoveisFiltrados() {
+        const imoveisParaExibir = this.imoveisFiltrados || this.imoveis;
+        const totalImoveis = imoveisParaExibir.length;
+        const startItem = (this.currentPageImoveis - 1) * this.itemsPerPageImoveis + 1;
+        const endItem = Math.min(this.currentPageImoveis * this.itemsPerPageImoveis, totalImoveis);
+        
+        const resultadosInfo = document.getElementById('imoveisResultadosInfo');
+        if (resultadosInfo) {
+            if (this.imoveisFiltrados && this.imoveisFiltrados.length < this.imoveis.length) {
+                resultadosInfo.textContent = `Exibindo ${startItem}-${endItem} de ${totalImoveis} imóveis (${this.imoveis.length} total)`;
+            } else {
+                resultadosInfo.textContent = `Exibindo ${startItem}-${endItem} de ${totalImoveis} imóveis`;
+            }
+        }
+    }
+
+    limparFiltrosImoveis() {
+        document.getElementById('filtroImoveis').value = '';
+        document.getElementById('filtroStatusImoveis').value = '';
+        
+        this.imoveisFiltrados = null;
+        this.currentPageImoveis = 1;
+        
+        this.atualizarTabelaImoveis();
     }
 }
 
