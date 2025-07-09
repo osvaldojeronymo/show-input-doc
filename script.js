@@ -1315,6 +1315,14 @@ class SistemaSILIC {
     }
 
     selecionarImovel(id) {
+        // FUNÇÃO DESABILITADA - Modal de locadores foi removido da apresentação
+        console.log('🏢 selecionarImovel desabilitada - Modal de locadores não disponível na apresentação');
+        
+        // Mostrar mensagem informativa em vez do modal
+        alert('Funcionalidade de gestão de locadores não disponível na versão de apresentação.\n\nPara gerenciar documentos, utilize o botão "DOCUMENTOS".');
+        return;
+        
+        /*
         console.log('🏢 selecionarImovel chamada com ID:', id);
         
         const imovel = this.imoveis.find(i => i.id === id);
@@ -1329,9 +1337,15 @@ class SistemaSILIC {
         this.imovelSelecionado = imovel;
         this.atualizarTabelaImoveis();
         this.mostrarModalLocadores();
+        */
     }
 
     mostrarModalLocadores() {
+        // FUNÇÃO DESABILITADA - Modal de locadores foi removido da apresentação
+        console.log('🪟 mostrarModalLocadores desabilitada - Modal não disponível na apresentação');
+        return;
+        
+        /*
         if (!this.imovelSelecionado) {
             alert('Nenhum imóvel selecionado!');
             return;
@@ -1371,6 +1385,7 @@ class SistemaSILIC {
         } else {
             console.error('❌ Modal de locadores não encontrado');
         }
+        */
     }
 
     atualizarEstatisticasModalLocadores() {
