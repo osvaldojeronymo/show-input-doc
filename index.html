@@ -496,7 +496,7 @@
         </div>
     </div>
 
-    <!-- Modal para Locadores -->
+    <!-- Modal para Locadores (OCULTO - MODO APRESENTAÇÃO) -->
     <div id="modalLocadores" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 900px;">
             <div class="modal-header">
@@ -655,6 +655,85 @@
                 <button class="btn btn-secondary" onclick="sistema.fecharModalDocumentos()">Fechar</button>
                 <button class="btn btn-primary" onclick="sistema.gerarRelatorioDocumentos()">Gerar Relatório</button>
                 <button class="btn btn-success" onclick="sistema.atualizarStatusDocumentos()">Atualizar Status</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para Avaliação do Imóvel -->
+    <div id="modalAvaliacao" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3>📊 Laudo de Avaliação do Imóvel</h3>
+                <span class="modal-close" onclick="sistema.fecharModalAvaliacao()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="infoImovelAvaliacao" class="mb-3" style="background: #f8f9fa; padding: 1rem; border-radius: 6px; border: 1px solid #e9ecef;">
+                    <!-- Informações do imóvel serão preenchidas aqui -->
+                </div>
+                
+                <!-- Formulário de Avaliação -->
+                <div class="avaliacao-form">
+                    <h4 style="color: #333; border-bottom: 2px solid #28a745; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+                        📋 Dados do Laudo de Avaliação
+                    </h4>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label for="dataElaboracao" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Data de Elaboração *</label>
+                            <input type="date" id="dataElaboracao" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="numeroDocumento" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Número do Documento *</label>
+                            <input type="text" id="numeroDocumento" class="form-input" placeholder="Ex: LAI-2025-001" required>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label for="nomeEmpresa" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Nome da Empresa Responsável *</label>
+                            <input type="text" id="nomeEmpresa" class="form-input" placeholder="Ex: Avaliações Técnicas Ltda" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cnpjEmpresa" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">CNPJ da Empresa *</label>
+                            <input type="text" id="cnpjEmpresa" class="form-input" placeholder="Ex: 12.345.678/0001-90" required maxlength="18">
+                        </div>
+                    </div>
+                    
+                    <h5 style="color: #333; margin: 2rem 0 1rem 0; padding-bottom: 0.5rem; border-bottom: 1px solid #dee2e6;">
+                        💰 Valores de Locação Mensal (R$)
+                    </h5>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label for="valorMinimo" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Valor Mínimo *</label>
+                            <input type="number" id="valorMinimo" class="form-input" placeholder="Ex: 5000.00" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="valorMedio" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Valor Médio *</label>
+                            <input type="number" id="valorMedio" class="form-input" placeholder="Ex: 6500.00" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="valorMaximo" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Valor Máximo *</label>
+                            <input type="number" id="valorMaximo" class="form-input" placeholder="Ex: 8000.00" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 1rem; border-radius: 6px; margin: 1.5rem 0;">
+                        <strong>💡 Dica:</strong> Os valores devem estar em ordem crescente (Mínimo ≤ Médio ≤ Máximo)
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button class="btn btn-success" onclick="sistema.salvarAvaliacaoImovel()">💾 Salvar Avaliação</button>
+                        <button class="btn btn-secondary" onclick="sistema.limparFormularioAvaliacao()">🗑️ Limpar Formulário</button>
+                    </div>
+                    
+                    <div id="statusAvaliacao" style="margin-top: 1rem; padding: 0.75rem; border-radius: 6px; display: none;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="sistema.fecharModalAvaliacao()">Fechar</button>
+                <button class="btn btn-primary" onclick="sistema.gerarRelatorioAvaliacao()">📄 Gerar Relatório</button>
+                <button class="btn btn-info" onclick="sistema.exportarAvaliacaoPDF()">📋 Exportar PDF</button>
             </div>
         </div>
     </div>

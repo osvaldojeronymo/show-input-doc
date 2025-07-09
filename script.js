@@ -677,8 +677,8 @@ class SistemaSILIC {
                         <button class="btn btn-sm btn-compact btn-warning" onclick="sistema.mostrarDocumentosImovel(${imovel.id})" title="Ver documentos do imóvel e locadores">
                             Documentos
                         </button>
-                        <button class="btn btn-sm btn-compact btn-danger" onclick="sistema.removerImovel(${imovel.id})" title="Remover imóvel">
-                            Remover
+                        <button class="btn btn-sm btn-compact btn-success" onclick="sistema.mostrarAvaliacaoImovel(${imovel.id})" title="Laudo de Avaliação do Imóvel">
+                            Avaliação
                         </button>
                     </div>
                 </td>
@@ -1274,55 +1274,144 @@ class SistemaSILIC {
         alert('Formulário preenchido para edição. Modifique os dados e clique em "Atualizar Imóvel".');
     }
     
-    removerImovel(id) {
+    mostrarAvaliacaoImovel(id) {
         const imovel = this.imoveis.find(i => i.id === id);
         if (!imovel) {
+            console.error('❌ Imóvel não encontrado para ID:', id);
             alert('Imóvel não encontrado!');
             return;
         }
-        
-        const locadoresVinculados = this.locadores.filter(l => l.imovelId === id);
-        
-        let mensagem = `Tem certeza que deseja remover o imóvel:\n\n`;
-        mensagem += `Código: ${imovel.codigo}\n`;
-        mensagem += `Denominação: ${imovel.denominacao}\n`;
-        mensagem += `Local: ${imovel.local}\n`;
-        
-        if (locadoresVinculados.length > 0) {
-            mensagem += `\nATENÇÃO: Este imóvel possui ${locadoresVinculados.length} locador(es) vinculado(s) que também serão removidos.`;
+
+        console.log('📊 Abrindo laudo de avaliação para:', imovel.denominacao);
+
+        // Armazenar ID do imóvel no modal para uso posterior
+        const modal = document.getElementById('modalAvaliacao');
+        if (modal) {
+            modal.dataset.imovelId = id;
         }
+
+        // Preencher informações do imóvel no modal
+        const infoImovelAvaliacao = document.getElementById('infoImovelAvaliacao');
+        if (infoImovelAvaliacao) {
+            infoImovelAvaliacao.innerHTML = `
+                <h5>📍 ${imovel.denominacao}</h5>
+                <p><strong>Código:</strong> ${imovel.codigo} | <strong>Local:</strong> ${imovel.local}</p>
+                <p><strong>Status:</strong> ${this.formatarStatusBadge(imovel.status)}</p>
+            `;
+        }
+
+        // Carregar dados existentes da avaliação se houver
+        this.carregarDadosAvaliacao(id);
+
+        // Abrir o modal
+        if (modal) {
+            modal.style.display = 'block';
+            console.log('✅ Modal de avaliação aberto');
+        } else {
+            console.error('❌ Modal de avaliação não encontrado');
+        }
+    }
+
+    carregarDadosAvaliacao(imovelId) {
+        // Verificar se já existem dados de avaliação salvos
+        const avaliacaoKey = `avaliacao_imovel_${imovelId}`;
+        const dadosSalvos = localStorage.getItem(avaliacaoKey);
         
-        mensagem += `\n\nEsta ação não pode ser desfeita!`;
+        if (dadosSalvos) {
+            const avaliacao = JSON.parse(dadosSalvos);
+            
+            // Preencher os campos com os dados salvos
+            document.getElementById('dataElaboracao').value = avaliacao.dataElaboracao || '';
+            document.getElementById('numeroDocumento').value = avaliacao.numeroDocumento || '';
+            document.getElementById('nomeEmpresa').value = avaliacao.nomeEmpresa || '';
+            document.getElementById('cnpjEmpresa').value = avaliacao.cnpjEmpresa || '';
+            document.getElementById('valorMinimo').value = avaliacao.valorMinimo || '';
+            document.getElementById('valorMedio').value = avaliacao.valorMedio || '';
+            document.getElementById('valorMaximo').value = avaliacao.valorMaximo || '';
+            
+            console.log('📊 Dados de avaliação carregados:', avaliacao);
+        } else {
+            // Limpar campos se não houver dados salvos
+            this.limparFormularioAvaliacao();
+        }
+    }
+
+    salvarAvaliacaoImovel() {
+        // Obter ID do imóvel atual
+        const modal = document.getElementById('modalAvaliacao');
+        const imovelId = modal.dataset.imovelId;
         
-        if (confirm(mensagem)) {
-            // Remover locadores vinculados
-            this.locadores = this.locadores.filter(l => l.imovelId !== id);
-            
-            // Remover imóvel
-            this.imoveis = this.imoveis.filter(i => i.id !== id);
-            
-            // Se era o imóvel selecionado, limpar seleção
-            if (this.imovelSelecionado?.id === id) {
-                this.imovelSelecionado = null;
-            }
-            
-            // Atualizar interface
-            this.atualizarDashboard();
-            this.atualizarTabelaImoveis();
-            
-            alert('Imóvel removido com sucesso!');
+        if (!imovelId) {
+            alert('Erro: ID do imóvel não encontrado!');
+            return;
+        }
+
+        // Coletar dados do formulário
+        const avaliacao = {
+            dataElaboracao: document.getElementById('dataElaboracao').value,
+            numeroDocumento: document.getElementById('numeroDocumento').value,
+            nomeEmpresa: document.getElementById('nomeEmpresa').value,
+            cnpjEmpresa: document.getElementById('cnpjEmpresa').value,
+            valorMinimo: parseFloat(document.getElementById('valorMinimo').value) || 0,
+            valorMedio: parseFloat(document.getElementById('valorMedio').value) || 0,
+            valorMaximo: parseFloat(document.getElementById('valorMaximo').value) || 0,
+            dataUltimaAtualizacao: new Date().toISOString()
+        };
+
+        // Validar campos obrigatórios
+        if (!avaliacao.dataElaboracao || !avaliacao.numeroDocumento || !avaliacao.nomeEmpresa || !avaliacao.cnpjEmpresa) {
+            alert('Por favor, preencha todos os campos obrigatórios!');
+            return;
+        }
+
+        // Validar valores de locação
+        if (avaliacao.valorMinimo > avaliacao.valorMedio || avaliacao.valorMedio > avaliacao.valorMaximo) {
+            alert('Os valores devem estar em ordem crescente: Mínimo ≤ Médio ≤ Máximo');
+            return;
+        }
+
+        // Salvar no localStorage
+        const avaliacaoKey = `avaliacao_imovel_${imovelId}`;
+        localStorage.setItem(avaliacaoKey, JSON.stringify(avaliacao));
+
+        // Mostrar feedback de sucesso
+        const statusDiv = document.getElementById('statusAvaliacao');
+        statusDiv.style.display = 'block';
+        statusDiv.style.background = '#d4edda';
+        statusDiv.style.color = '#155724';
+        statusDiv.style.border = '1px solid #c3e6cb';
+        statusDiv.innerHTML = '✅ Laudo de avaliação salvo com sucesso!';
+
+        console.log('💾 Avaliação salva:', avaliacao);
+        
+        // Fechar modal após 2 segundos
+        setTimeout(() => {
+            this.fecharModalAvaliacao();
+        }, 2000);
+    }
+
+    limparFormularioAvaliacao() {
+        document.getElementById('dataElaboracao').value = '';
+        document.getElementById('numeroDocumento').value = '';
+        document.getElementById('nomeEmpresa').value = '';
+        document.getElementById('cnpjEmpresa').value = '';
+        document.getElementById('valorMinimo').value = '';
+        document.getElementById('valorMedio').value = '';
+        document.getElementById('valorMaximo').value = '';
+        
+        const statusDiv = document.getElementById('statusAvaliacao');
+        statusDiv.style.display = 'none';
+    }
+
+    fecharModalAvaliacao() {
+        const modal = document.getElementById('modalAvaliacao');
+        if (modal) {
+            modal.style.display = 'none';
+            console.log('🚪 Modal de avaliação fechado');
         }
     }
 
     selecionarImovel(id) {
-        // FUNÇÃO DESABILITADA - Modal de locadores foi removido da apresentação
-        console.log('🏢 selecionarImovel desabilitada - Modal de locadores não disponível na apresentação');
-        
-        // Mostrar mensagem informativa em vez do modal
-        alert('Funcionalidade de gestão de locadores não disponível na versão de apresentação.\n\nPara gerenciar documentos, utilize o botão "DOCUMENTOS".');
-        return;
-        
-        /*
         console.log('🏢 selecionarImovel chamada com ID:', id);
         
         const imovel = this.imoveis.find(i => i.id === id);
@@ -1337,15 +1426,9 @@ class SistemaSILIC {
         this.imovelSelecionado = imovel;
         this.atualizarTabelaImoveis();
         this.mostrarModalLocadores();
-        */
     }
 
     mostrarModalLocadores() {
-        // FUNÇÃO DESABILITADA - Modal de locadores foi removido da apresentação
-        console.log('🪟 mostrarModalLocadores desabilitada - Modal não disponível na apresentação');
-        return;
-        
-        /*
         if (!this.imovelSelecionado) {
             alert('Nenhum imóvel selecionado!');
             return;
@@ -1385,7 +1468,6 @@ class SistemaSILIC {
         } else {
             console.error('❌ Modal de locadores não encontrado');
         }
-        */
     }
 
     atualizarEstatisticasModalLocadores() {
