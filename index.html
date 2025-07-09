@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+<!-- Versão atualizada: 2025-07-09 -->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SILIC 2.0 - CAIXA</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.2">
 </head>
 <body>
     <header>
@@ -62,19 +63,26 @@
             <!-- Ações Principais -->
             <div class="main-actions">
                 <div class="actions-primary">
-                    <button id="btnNovoImovel" class="btn btn-primary btn-compact" onclick="sistema.mostrarFormulario()">
-                        Cadastrar Novo Edifício
+                    <button id="btnNovoImovel" class="btn btn-primary btn-compact btn-action-responsive tooltip-wrapper" 
+                            data-tooltip="Clique para abrir o formulário de cadastro">
+                         Cadastrar Novo Edifício
                     </button>
                 </div>
                 <div class="actions-secondary">
-                    <button class="btn btn-info btn-compact" onclick="alert('Funcionalidade a ser implementada')">
-                        Buscar no SIPGE/SAP
+                    <button class="btn btn-info btn-compact btn-action-responsive tooltip-wrapper" 
+                            onclick="alert('Funcionalidade a ser implementada!')" 
+                            data-tooltip="Buscar dados no sistema SIPGE/SAP">
+                         Buscar no SIPGE/SAP
                     </button>
-                    <button class="btn btn-warning btn-compact" onclick="alert('Funcionalidade a ser implementada')">
-                        Buscar Consulta Pública
+                    <button class="btn btn-warning btn-compact btn-action-responsive tooltip-wrapper" 
+                            onclick="alert('Funcionalidade a ser implementada!')" 
+                            data-tooltip="Consultar dados públicos disponíveis">
+                         Buscar Consulta Pública
                     </button>
-                    <button class="btn btn-success btn-compact" onclick="sistema.executarAuditoriaCompleta()">
-                        Auditoria de Dados
+                    <button class="btn btn-success btn-compact btn-action-responsive tooltip-wrapper" 
+                            onclick="sistema.executarAuditoriaCompleta()" 
+                            data-tooltip="Executar auditoria completa dos dados">
+                         Auditoria de Dados
                     </button>
                 </div>
             </div>
@@ -211,7 +219,7 @@
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <h3 style="margin: 0; color: #0066cc; font-size: 1.2rem; font-weight: 600;">Buscar e Filtrar Imóveis</h3>
                     </div>
-                    <button class="btn btn-ghost btn-sm btn-compact" onclick="sistema.limparFiltrosImoveis()" id="btnLimparFiltros" style="padding: 0.5rem 1rem; font-size: 0.85rem; color: #6c757d; background: transparent; border: 1px solid #dee2e6;">
+                    <button class="btn btn-ghost btn-sm btn-compact" id="btnLimparFiltros" style="padding: 0.5rem 1rem; font-size: 0.85rem; color: #6c757d; background: transparent; border: 1px solid #dee2e6;">
                         Limpar Filtros
                     </button>
                 </div>
@@ -308,8 +316,8 @@
             </div>
         </section>
 
-        <!-- Seção de Locadores -->
-        <section class="locadores-section">
+        <!-- Seção de Locadores (OCULTA) -->
+        <section class="locadores-section" style="display: none;">
             <h2>Locadores vinculados ao imóvel selecionado</h2>
             
             <!-- Dashboard de Estatísticas -->
@@ -466,11 +474,14 @@
         </section>
     </main>
     
+    <!-- Container para Notificações Toast -->
+    <div id="toastContainer" class="toast-container"></div>
+    
     <!-- Modal para Detalhes do Imóvel -->
     <div id="modalDetalhesImovel" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>🏢 Detalhes do Imóvel</h3>
+                <h3>Detalhes do Imóvel</h3>
                 <span class="modal-close" onclick="sistema.fecharModalDetalhes()">&times;</span>
             </div>
             <div class="modal-body">
@@ -484,10 +495,307 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal para Locadores -->
+    <div id="modalLocadores" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3>Gerenciar Locadores</h3>
+                <span class="modal-close" onclick="sistema.fecharModalLocadores()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="infoImovelModal" class="mb-3" style="background: #f8f9fa; padding: 1rem; border-radius: 6px; border: 1px solid #e9ecef;">
+                    <!-- Informações do imóvel serão preenchidas aqui -->
+                </div>
+                
+                <div class="locadores-stats mb-3" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div class="stat-card" style="background: #e7f3ff; padding: 1rem; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #0066cc;" id="totalLocadoresModal">0</div>
+                        <div style="color: #666;">Total de Locadores</div>
+                    </div>
+                    <div class="stat-card" style="background: #e8f5e8; padding: 1rem; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #28a745;" id="pessoaFisicaModal">0</div>
+                        <div style="color: #666;">Pessoa Física</div>
+                    </div>
+                    <div class="stat-card" style="background: #fff3e0; padding: 1rem; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #ff9800;" id="pessoaJuridicaModal">0</div>
+                        <div style="color: #666;">Pessoa Jurídica</div>
+                    </div>
+                </div>
+
+                <div class="locadores-actions mb-3" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h4 style="margin: 0;">Lista de Locadores</h4>
+                    <button class="btn btn-primary" onclick="sistema.abrirFormularioLocador()">
+                        Adicionar Locador
+                    </button>
+                </div>
+
+                <div id="listaLocadoresModal" class="locadores-list">
+                    <!-- Lista de locadores será preenchida aqui -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="sistema.fecharModalLocadores()">Fechar</button>
+                <button class="btn btn-primary" onclick="sistema.gerarMaisLocadores()">Gerar Mais Locadores</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Documentos -->
+    <div id="modalDocumentos" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 1000px;">
+            <div class="modal-header">
+                <h3>Documentos do Imóvel e Locadores</h3>
+                <span class="modal-close" onclick="sistema.fecharModalDocumentos()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="infoImovelDocumentos" class="mb-3" style="background: #f8f9fa; padding: 1rem; border-radius: 6px; border: 1px solid #e9ecef;">
+                    <!-- Informações do imóvel serão preenchidas aqui -->
+                </div>
+                
+                <!-- Documentos do Imóvel -->
+                <div class="documentos-imovel mb-4">
+                    <h4 style="color: #333; border-bottom: 2px solid #007bff; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                        📋 Documentos do Imóvel
+                    </h4>
+                    <div id="documentosImovelContainer">
+                        <!-- Documentos do imóvel serão preenchidos aqui -->
+                    </div>
+                </div>
+
+                <!-- Documentos dos Locadores -->
+                <div class="documentos-locadores">
+                    <h4 style="color: #333; border-bottom: 2px solid #28a745; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                        👥 Documentos dos Locadores
+                    </h4>
+                    <div id="documentosLocadoresContainer">
+                        <!-- Documentos dos locadores serão preenchidos aqui -->
+                    </div>
+                </div>
+
+                <!-- Resumo de Status -->
+                <div class="resumo-status mt-4" style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px solid #e9ecef;">
+                    <h5 style="margin-bottom: 1rem; color: #333;">📊 Resumo Geral de Documentos</h5>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="stat-card" style="background: #e8f5e8; padding: 1rem; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #28a745;" id="totalEntregues">0</div>
+                            <div style="color: #666;">Entregues</div>
+                        </div>
+                        <div class="stat-card" style="background: #fff3e0; padding: 1rem; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #ff9800;" id="totalPendentes">0</div>
+                            <div style="color: #666;">Pendentes</div>
+                        </div>
+                        <div class="stat-card" style="background: #e7f3ff; padding: 1rem; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #2196f3;" id="totalAnalise">0</div>
+                            <div style="color: #666;">Em Análise</div>
+                        </div>
+                        <div class="stat-card" style="background: #ffebee; padding: 1rem; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #f44336;" id="totalRejeitados">0</div>
+                            <div style="color: #666;">Rejeitados</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="sistema.fecharModalDocumentos()">Fechar</button>
+                <button class="btn btn-primary" onclick="sistema.gerarRelatorioDocumentos()">Gerar Relatório</button>
+                <button class="btn btn-success" onclick="sistema.atualizarStatusDocumentos()">Atualizar Status</button>
+            </div>
+        </div>
+    </div>
     
-    <script src="script.js"></script>
+    <script src="script.js?v=20250709"></script>
     <script>
-        console.log('Página carregada, botões prontos');
+        console.log('Página carregada, iniciando sistema...');
+        
+        // Aguardar o carregamento completo do sistema
+        function aguardarSistemaCarregado() {
+            if (!window.sistema) {
+                console.log('⏳ Aguardando sistema...');
+                setTimeout(aguardarSistemaCarregado, 100);
+                return;
+            }
+            
+            if (!window.sistema.imoveis || window.sistema.imoveis.length === 0) {
+                console.log('⏳ Aguardando dados...');
+                setTimeout(aguardarSistemaCarregado, 100);
+                return;
+            }
+            
+            console.log('✅ Sistema carregado, configurando controles...');
+            configurarControles();
+        }
+        
+        function configurarControles() {
+            // 1. Configurar botão Cadastrar
+            const btnNovoImovel = document.getElementById('btnNovoImovel');
+            if (btnNovoImovel) {
+                btnNovoImovel.addEventListener('click', function() {
+                    console.log('� Abrindo formulário...');
+                    if (window.sistema.mostrarFormulario) {
+                        window.sistema.mostrarFormulario();
+                    }
+                });
+                console.log('✅ Botão Cadastrar configurado');
+            }
+            
+            // 2. Forçar atualização da tabela
+            if (window.sistema.atualizarTabelaImoveis) {
+                console.log('🔄 Forçando atualização da tabela...');
+                window.sistema.atualizarTabelaImoveis();
+            }
+            
+            // 3. Configurar filtros usando as funções originais do sistema
+            if (window.sistema.configurarFiltrosImoveisImediato) {
+                console.log('� Configurando filtros...');
+                window.sistema.configurarFiltrosImoveisImediato();
+            }
+            
+            console.log('✅ Todos os controles configurados');
+        }
+        
+        // Iniciar o processo
+        setTimeout(aguardarSistemaCarregado, 500);
+    </script>
+    </script>
+    <script>
+        console.log('Página carregada, botões prontos - versão atualizada');
+        
+        // Função para garantir que os filtros funcionem
+        function garantirFiltrosFuncionando() {
+            console.log('🔧 Garantindo que filtros funcionem...');
+            
+            // Verificar se elementos existem
+            const filtroImoveis = document.getElementById('filtroImoveis');
+            const filtroStatusImoveis = document.getElementById('filtroStatusImoveis');
+            const btnLimparFiltros = document.getElementById('btnLimparFiltros');
+            
+            if (!filtroImoveis || !filtroStatusImoveis || !btnLimparFiltros) {
+                console.error('❌ Elementos de filtro não encontrados');
+                return;
+            }
+            
+            console.log('✅ Todos os elementos encontrados');
+            
+            // Limpar event listeners existentes e recriar
+            filtroImoveis.replaceWith(filtroImoveis.cloneNode(true));
+            filtroStatusImoveis.replaceWith(filtroStatusImoveis.cloneNode(true));
+            btnLimparFiltros.replaceWith(btnLimparFiltros.cloneNode(true));
+            
+            // Reobter elementos após clone
+            const novoFiltroImoveis = document.getElementById('filtroImoveis');
+            const novoFiltroStatus = document.getElementById('filtroStatusImoveis');
+            const novoBtnLimpar = document.getElementById('btnLimparFiltros');
+            
+            // Adicionar event listeners diretamente
+            novoFiltroImoveis.addEventListener('input', function(e) {
+                console.log('🔍 Filtro texto:', e.target.value);
+                if (window.sistema && window.sistema.filtrarImoveis) {
+                    window.sistema.filtrarImoveis();
+                }
+            });
+            
+            novoFiltroStatus.addEventListener('change', function(e) {
+                console.log('🏷️ Filtro status:', e.target.value);
+                if (window.sistema && window.sistema.filtrarImoveis) {
+                    window.sistema.filtrarImoveis();
+                }
+            });
+            
+            novoBtnLimpar.addEventListener('click', function() {
+                console.log('🗑️ Limpar filtros');
+                if (window.sistema && window.sistema.limparFiltrosImoveis) {
+                    window.sistema.limparFiltrosImoveis();
+                }
+            });
+            
+            console.log('✅ Filtros reconfigurados com sucesso!');
+        }
+        
+        // Função para garantir que o botão Cadastrar funcione
+        function garantirBotaoCadastrarFuncionando() {
+            console.log('🔧 Garantindo que botão Cadastrar funcione...');
+            
+            const btnNovoImovel = document.getElementById('btnNovoImovel');
+            if (btnNovoImovel) {
+                btnNovoImovel.addEventListener('click', function() {
+                    console.log('📋 Botão Cadastrar clicado');
+                    if (window.sistema && window.sistema.mostrarFormulario) {
+                        window.sistema.mostrarFormulario();
+                    } else {
+                        console.error('❌ Sistema ou função mostrarFormulario não encontrada');
+                    }
+                });
+                console.log('✅ Botão Cadastrar configurado');
+            } else {
+                console.error('❌ Botão btnNovoImovel não encontrado');
+            }
+        }
+        
+        // Aguardar sistema estar pronto e forçar inicialização
+        function inicializarSistemaCompleto() {
+            console.log('🔄 Inicializando sistema completo...');
+            
+            if (!window.sistema) {
+                console.log('❌ Sistema não encontrado');
+                return;
+            }
+            
+            // 1. Forçar carregamento de dados se necessário
+            if (!window.sistema.imoveis || window.sistema.imoveis.length === 0) {
+                console.log('📊 Forçando carregamento de dados...');
+                window.sistema.carregarDadosDemo();
+                
+                // Aguardar carregamento
+                setTimeout(() => {
+                    console.log('📋 Dados carregados:', window.sistema.imoveis?.length || 0);
+                    configurarTudo();
+                }, 1500);
+            } else {
+                configurarTudo();
+            }
+        }
+        
+        function configurarTudo() {
+            // 1. Atualizar tabela
+            if (window.sistema.atualizarTabelaImoveis) {
+                console.log('🔄 Atualizando tabela...');
+                window.sistema.atualizarTabelaImoveis();
+            }
+            
+            // 2. Configurar filtros
+            if (window.sistema.configurarFiltrosImoveisImediato) {
+                console.log('🔧 Configurando filtros...');
+                window.sistema.configurarFiltrosImoveisImediato();
+            }
+            
+            // 3. Configurar botão cadastrar
+            const btnNovoImovel = document.getElementById('btnNovoImovel');
+            if (btnNovoImovel && window.sistema.mostrarFormulario) {
+                btnNovoImovel.addEventListener('click', () => {
+                    console.log('📋 Abrindo formulário...');
+                    window.sistema.mostrarFormulario();
+                });
+                console.log('✅ Botão cadastrar configurado');
+            }
+            
+            console.log('✅ Sistema configurado completamente');
+        }
+        
+        // Aguardar sistema estar disponível
+        let tentativas = 0;
+        const aguardarSistema = setInterval(() => {
+            tentativas++;
+            
+            if (window.sistema) {
+                clearInterval(aguardarSistema);
+                console.log('✅ Sistema encontrado');
+                inicializarSistemaCompleto();
+            } else if (tentativas > 50) {
+                clearInterval(aguardarSistema);
+                console.error('❌ Timeout - sistema não encontrado');
+            }
+        }, 100);
     </script>
 </body>
 </html>
