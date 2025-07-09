@@ -563,6 +563,61 @@
                     </div>
                 </div>
 
+                <!-- Relatório Técnico do Imóvel -->
+                <div class="relatorio-tecnico mb-4">
+                    <h4 style="color: #333; border-bottom: 2px solid #ff6b35; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                        🔧 Relatório Técnico do Imóvel
+                    </h4>
+                    <div id="relatorioTecnicoContainer" style="background: #fff9f5; padding: 1.5rem; border-radius: 8px; border: 1px solid #ffe0cc;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                            <div class="form-group">
+                                <label for="areaContratada" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Área a ser Contratada (m²)</label>
+                                <input type="number" id="areaContratada" class="form-input" placeholder="Ex: 1250.50" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="valorTotalObra" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Valor Total da Obra (R$)</label>
+                                <input type="number" id="valorTotalObra" class="form-input" placeholder="Ex: 150000.00" step="0.01">
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                            <div class="form-group">
+                                <label for="valorObraCaixa" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Valor da Obra - CAIXA (R$)</label>
+                                <input type="number" id="valorObraCaixa" class="form-input" placeholder="Ex: 90000.00" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="valorObraLocador" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Valor da Obra - LOCADOR (R$)</label>
+                                <input type="number" id="valorObraLocador" class="form-input" placeholder="Ex: 60000.00" step="0.01">
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                            <div class="form-group">
+                                <label for="prazoTotalObra" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Prazo Total da Obra (meses)</label>
+                                <input type="number" id="prazoTotalObra" class="form-input" placeholder="Ex: 18" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="prazoCaixa" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Prazo CAIXA (meses)</label>
+                                <input type="number" id="prazoCaixa" class="form-input" placeholder="Ex: 12" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="prazoLocador" style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Prazo LOCADOR (meses)</label>
+                                <input type="number" id="prazoLocador" class="form-input" placeholder="Ex: 6" min="1">
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid #ffe0cc; padding-top: 1rem;">
+                            <button class="btn btn-secondary btn-sm" onclick="sistema.limparRelatorioTecnico()">Limpar</button>
+                            <button class="btn btn-warning btn-sm" onclick="sistema.salvarRelatorioTecnico()">Salvar Relatório</button>
+                            <button class="btn btn-success btn-sm" onclick="sistema.validarRelatorioTecnico()">Validar Dados</button>
+                        </div>
+                        
+                        <div id="statusRelatorioTecnico" style="margin-top: 1rem; padding: 0.75rem; border-radius: 6px; display: none;">
+                            <!-- Status do relatório técnico será exibido aqui -->
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Documentos dos Locadores -->
                 <div class="documentos-locadores">
                     <h4 style="color: #333; border-bottom: 2px solid #28a745; padding-bottom: 0.5rem; margin-bottom: 1rem;">

@@ -2141,6 +2141,9 @@ class SistemaSILIC {
         // Atualizar resumo de status
         this.atualizarResumoStatusDocumentos(imovel, id);
         
+        // Carregar dados do relatório técnico se existirem
+        this.carregarRelatorioTecnico(imovel);
+        
         // Abrir o modal
         const modal = document.getElementById('modalDocumentos');
         if (modal) {
@@ -2400,6 +2403,178 @@ class SistemaSILIC {
                 'CPF e RG do Representante Legal': gerarStatus(),
                 'Procuração (se aplicável)': Math.random() > 0.6 ? gerarStatus() : null
             };
+        }
+    }
+
+    // === FUNÇÕES DO RELATÓRIO TÉCNICO ===
+
+    limparRelatorioTecnico() {
+        const campos = [
+            'areaContratada', 'valorTotalObra', 'valorObraCaixa', 
+            'valorObraLocador', 'prazoTotalObra', 'prazoCaixa', 'prazoLocador'
+        ];
+        
+        campos.forEach(campo => {
+            const elemento = document.getElementById(campo);
+            if (elemento) elemento.value = '';
+        });
+        
+        this.exibirStatusRelatorioTecnico('Dados limpos', 'info');
+        console.log('🧹 Dados do relatório técnico limpos');
+    }
+
+    salvarRelatorioTecnico() {
+        const dados = this.coletarDadosRelatorioTecnico();
+        
+        if (!dados.valido) {
+            this.exibirStatusRelatorioTecnico('Preencha todos os campos obrigatórios', 'error');
+            return;
+        }
+        
+        // Encontrar o imóvel atual
+        const imovel = this.imoveis.find(i => i.id === this.imovelAtualDocumentos);
+        if (!imovel) {
+            this.exibirStatusRelatorioTecnico('Erro: Imóvel não encontrado', 'error');
+            return;
+        }
+        
+        // Salvar os dados do relatório técnico no imóvel
+        if (!imovel.relatorioTecnico) {
+            imovel.relatorioTecnico = {};
+        }
+        
+        Object.assign(imovel.relatorioTecnico, dados.dados);
+        imovel.relatorioTecnico.dataAtualizacao = new Date().toLocaleString('pt-BR');
+        
+        this.exibirStatusRelatorioTecnico('Relatório técnico salvo com sucesso!', 'success');
+        console.log('💾 Relatório técnico salvo:', dados.dados);
+    }
+
+    validarRelatorioTecnico() {
+        const dados = this.coletarDadosRelatorioTecnico();
+        
+        if (!dados.valido) {
+            this.exibirStatusRelatorioTecnico('Dados incompletos ou inválidos', 'error');
+            return;
+        }
+        
+        const validacoes = [];
+        
+        // Validar se a soma dos valores das obras confere
+        const somaObras = dados.dados.valorObraCaixa + dados.dados.valorObraLocador;
+        if (Math.abs(somaObras - dados.dados.valorTotalObra) > 0.01) {
+            validacoes.push('A soma dos valores CAIXA + LOCADOR deve ser igual ao valor total da obra');
+        }
+        
+        // Validar se a soma dos prazos não excede o prazo total
+        const somaPrazos = dados.dados.prazoCaixa + dados.dados.prazoLocador;
+        if (somaPrazos > dados.dados.prazoTotalObra) {
+            validacoes.push('A soma dos prazos CAIXA + LOCADOR não pode exceder o prazo total');
+        }
+        
+        // Validar área contratada
+        if (dados.dados.areaContratada <= 0) {
+            validacoes.push('Área contratada deve ser maior que zero');
+        }
+        
+        // Validar valores
+        if (dados.dados.valorTotalObra <= 0) {
+            validacoes.push('Valor total da obra deve ser maior que zero');
+        }
+        
+        if (validacoes.length > 0) {
+            const mensagem = 'Problemas encontrados:\n• ' + validacoes.join('\n• ');
+            this.exibirStatusRelatorioTecnico(mensagem, 'error');
+        } else {
+            this.exibirStatusRelatorioTecnico('Todos os dados estão válidos!', 'success');
+        }
+    }
+
+    coletarDadosRelatorioTecnico() {
+        const campos = {
+            areaContratada: 'number',
+            valorTotalObra: 'number',
+            valorObraCaixa: 'number',
+            valorObraLocador: 'number',
+            prazoTotalObra: 'number',
+            prazoCaixa: 'number',
+            prazoLocador: 'number'
+        };
+        
+        const dados = {};
+        let valido = true;
+        
+        Object.entries(campos).forEach(([campo, tipo]) => {
+            const elemento = document.getElementById(campo);
+            if (elemento) {
+                const valor = elemento.value.trim();
+                if (valor === '') {
+                    valido = false;
+                } else {
+                    dados[campo] = tipo === 'number' ? parseFloat(valor) : valor;
+                }
+            } else {
+                valido = false;
+            }
+        });
+        
+        return { dados, valido };
+    }
+
+    exibirStatusRelatorioTecnico(mensagem, tipo = 'info') {
+        const statusDiv = document.getElementById('statusRelatorioTecnico');
+        if (!statusDiv) return;
+        
+        const cores = {
+            success: { bg: '#d4edda', border: '#c3e6cb', text: '#155724' },
+            error: { bg: '#f8d7da', border: '#f5c6cb', text: '#721c24' },
+            warning: { bg: '#fff3cd', border: '#ffeaa7', text: '#856404' },
+            info: { bg: '#d1ecf1', border: '#bee5eb', text: '#0c5460' }
+        };
+        
+        const cor = cores[tipo] || cores.info;
+        
+        statusDiv.style.display = 'block';
+        statusDiv.style.background = cor.bg;
+        statusDiv.style.border = `1px solid ${cor.border}`;
+        statusDiv.style.color = cor.text;
+        statusDiv.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-weight: 600;">
+                    ${tipo === 'success' ? '✅' : tipo === 'error' ? '❌' : tipo === 'warning' ? '⚠️' : 'ℹ️'}
+                </span>
+                <span style="white-space: pre-line;">${mensagem}</span>
+            </div>
+        `;
+        
+        // Ocultar automaticamente após alguns segundos para mensagens de sucesso
+        if (tipo === 'success' || tipo === 'info') {
+            setTimeout(() => {
+                if (statusDiv) statusDiv.style.display = 'none';
+            }, 5000);
+        }
+    }
+
+    carregarRelatorioTecnico(imovel) {
+        if (!imovel.relatorioTecnico) return;
+        
+        const campos = [
+            'areaContratada', 'valorTotalObra', 'valorObraCaixa', 
+            'valorObraLocador', 'prazoTotalObra', 'prazoCaixa', 'prazoLocador'
+        ];
+        
+        campos.forEach(campo => {
+            const elemento = document.getElementById(campo);
+            if (elemento && imovel.relatorioTecnico[campo] !== undefined) {
+                elemento.value = imovel.relatorioTecnico[campo];
+            }
+        });
+        
+        if (imovel.relatorioTecnico.dataAtualizacao) {
+            this.exibirStatusRelatorioTecnico(
+                `Dados carregados (última atualização: ${imovel.relatorioTecnico.dataAtualizacao})`, 
+                'info'
+            );
         }
     }
 
