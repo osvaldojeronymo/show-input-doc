@@ -13,8 +13,8 @@ Migrar o visual e experiência do dashboard técnico para o padrão superior do 
 ```css
 /* Header moderno com background gradient e sombra */
 .header {
-    background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
-    box-shadow: 0 4px 20px rgba(0, 102, 204, 0.15);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    box-shadow: var(--shadow-lg);
     padding: 1rem 0;
     position: sticky;
     top: 0;
@@ -76,17 +76,17 @@ Migrar o visual e experiência do dashboard técnico para o padrão superior do 
 ### Cards Modernos
 ```css
 .card {
-    background: white;
+    background: var(--white);
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-200);
+    transition: all var(--transition-normal);
     overflow: hidden;
 }
 
 .card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-lg);
 }
 
 .card-header {
@@ -101,7 +101,7 @@ Migrar o visual e experiência do dashboard técnico para o padrão superior do 
 .card-title {
     font-size: 1.3rem;
     font-weight: 600;
-    color: #2c3e50;
+    color: var(--primary);
     margin: 0 0 0.5rem;
     letter-spacing: -0.01em;
 }
@@ -117,30 +117,30 @@ Migrar o visual e experiência do dashboard técnico para o padrão superior do 
 }
 
 .stat-card {
-    background: white;
+    background: var(--white);
     padding: 2rem;
     border-radius: 12px;
     text-align: center;
-    border-left: 4px solid var(--accent-color);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
+    border-left: 4px solid var(--accent);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
 }
 
 .stat-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-lg);
 }
 
 .stat-number {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #2c3e50;
+    color: var(--primary);
     margin-bottom: 0.5rem;
     line-height: 1;
 }
 
 .stat-label {
-    color: #64748b;
+    color: var(--gray-600);
     font-size: 0.95rem;
     font-weight: 500;
     text-transform: uppercase;
@@ -157,10 +157,10 @@ h3 { font-size: 1.5rem; font-weight: 600; line-height: 1.4; }
 
 /* Textos de corpo */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 1rem;
     line-height: 1.6;
-    color: #374151;
+    color: var(--gray-700);
 }
 ```
 
@@ -168,12 +168,14 @@ body {
 ```css
 :root {
     /* Cores CAIXA */
-    --primary: #0066cc;
-    --primary-dark: #004499;
-    --accent: #ffcc00;
-    --accent-dark: #e6b800;
+    --primary: #003366;
+    --primary-light: #0056b3;
+    --primary-dark: #002244;
+    --accent: #F39200;
+    --accent-hover: #E67E22;
     
     /* Escala de cinzas moderna */
+    --white: #ffffff;
     --gray-50: #f9fafb;
     --gray-100: #f3f4f6;
     --gray-200: #e5e7eb;
@@ -190,6 +192,17 @@ body {
     --warning: #f59e0b;
     --error: #ef4444;
     --info: #3b82f6;
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.15);
+    
+    /* Transições */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.6s ease;
 }
 ```
 
