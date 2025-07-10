@@ -32,20 +32,46 @@ header {
 .header-content {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-.logo-section {
+.portal-nav {
     display: flex;
     align-items: center;
 }
 
-.logo {
-    height: 50px;
-    width: auto;
+.btn-voltar-portal {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-voltar-portal:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-voltar-portal svg {
+    transition: transform 0.3s ease;
+}
+
+.btn-voltar-portal:hover svg {
+    transform: translateX(-3px);
 }
 
 .title-section {

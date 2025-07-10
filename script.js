@@ -1,6 +1,28 @@
 // SILIC 2.0 - Sistema de Locação de Imóveis
 // Versão para Apresentação com dados de demonstração
 
+// Função para voltar ao portal SILIC
+function voltarAoPortal() {
+    // URL do portal principal
+    const portalUrl = 'https://osvaldojeronymo.github.io/silic-portal-imoveis/';
+    
+    // Verifica se veio do portal (usando referrer ou parâmetro)
+    const referrer = document.referrer;
+    const hasPortalParam = window.location.search.includes('from=portal');
+    
+    if (referrer.includes('silic-portal') || hasPortalParam) {
+        // Voltou do portal, pode usar history.back() ou window.close()
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = portalUrl;
+        }
+    } else {
+        // Acesso direto, redireciona para o portal
+        window.location.href = portalUrl;
+    }
+}
+
 class SistemaSILIC {
     constructor() {
         this.imoveis = [];
@@ -1712,7 +1734,7 @@ class SistemaSILIC {
                 'RG - Registro Geral': Math.random() > 0.3 ? gerarStatus() : null,
                 'CPF - Cadastro de Pessoa Física': gerarStatus(),
                 'Passaporte': Math.random() > 0.9 ? gerarStatus() : null,
-                'Carteira Profissional': Math.random() > 0.8 ? gerarStatus() : null,
+                'Carteira Profissional': Math.random() > 0.6 ? gerarStatus() : null,
                 'CND/CPEND - RFB e PGFN': gerarStatus(),
                 'Escritura Pública (Promitente Comprador)': Math.random() > 0.7 ? gerarStatus() : null,
                 'Protocolo Registro de Propriedade': Math.random() > 0.8 ? gerarStatus() : null
@@ -2302,7 +2324,7 @@ class SistemaSILIC {
                     <div class="documento-card" style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; border-left: 4px solid ${statusInfo.cor};">
                         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
                             <h6 style="margin: 0; color: #333; font-size: 0.95rem; line-height: 1.3;">${nomeDoc}</h6>
-                            <span class="status-badge" style="background: ${statusInfo.background}; color: ${statusInfo.cor}; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; white-space: nowrap;">
+                            <span class="status-badge" style="background: ${statusInfo.background}; color: ${statusInfo.cor}; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.875rem; font-weight: 500;">
                                 ${statusInfo.icone} ${statusInfo.texto}
                             </span>
                         </div>
@@ -2674,88 +2696,4 @@ class SistemaSILIC {
             );
         }
     }
-
-    fecharModalDocumentos() {
-        const modal = document.getElementById('modalDocumentos');
-        if (modal) {
-            modal.style.display = 'none';
-            console.log('🚪 Modal de documentos fechado');
-        }
-        
-        // Limpar referência
-        this.imovelAtualDocumentos = null;
-    }
-
-    gerarRelatorioDocumentos() {
-        if (!this.imovelAtualDocumentos) {
-            alert('Nenhum imóvel selecionado para gerar relatório!');
-            return;
-        }
-
-        const imovel = this.imoveis.find(i => i.id === this.imovelAtualDocumentos);
-        if (!imovel) {
-            alert('Imóvel não encontrado!');
-            return;
-        }
-
-        alert(`Relatório de Documentos seria gerado para:\n\n${imovel.denominacao} (${imovel.codigo})\n\nFuncionalidade será implementada em breve.`);
-    }
-
-    atualizarStatusDocumentos() {
-        if (!this.imovelAtualDocumentos) {
-            alert('Nenhum imóvel selecionado!');
-            return;
-        }
-
-        if (confirm('Tem certeza que deseja atualizar o status de todos os documentos?\n\nEsta ação irá simular uma atualização automática dos status.')) {
-            // Simular atualização de status
-            const imovel = this.imoveis.find(i => i.id === this.imovelAtualDocumentos);
-            const locadoresDoImovel = this.locadores.filter(l => l.imovelId === this.imovelAtualDocumentos);
-            
-            let atualizacoes = 0;
-            
-            // Atualizar documentos do imóvel
-            if (imovel.documentosImovel) {
-                Object.keys(imovel.documentosImovel).forEach(doc => {
-                    if (Math.random() > 0.7) { // 30% chance de mudança
-                        imovel.documentosImovel[doc] = Math.random() > 0.5 ? 'entregue' : 'em_analise';
-                        atualizacoes++;
-                    }
-                });
-            }
-            
-            // Atualizar documentos dos locadores
-            locadoresDoImovel.forEach(locador => {
-                if (locador.documentos) {
-                    Object.keys(locador.documentos).forEach(doc => {
-                        if (Math.random() > 0.8) { // 20% chance de mudança
-                            locador.documentos[doc] = Math.random() > 0.6 ? 'entregue' : 'em_analise';
-                            atualizacoes++;
-                        }
-                    });
-                }
-            });
-            
-            // Recarregar o modal com os novos dados
-            this.mostrarDocumentosImovel(this.imovelAtualDocumentos);
-            
-            alert(`Status atualizado com sucesso!\n\n${atualizacoes} documento(s) teve(ram) seu status alterado.`);
-        }
-    }
-
-    // === GERAÇÃO DE DADOS DEMO ===
 }
-
-// Inicializar o sistema quando o script for carregado
-console.log('Iniciando sistema SILIC...');
-window.sistema = new SistemaSILIC();
-
-// Função para reconectar filtros (caso necessário)
-window.reconectarFiltros = function() {
-    if (window.sistema) {
-        console.log('Reconectando filtros...');
-        window.sistema.configurarFiltrosImoveisImediato();
-    }
-};
-
-console.log('Sistema SILIC carregado e pronto para uso!');
