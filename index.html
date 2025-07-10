@@ -29,46 +29,44 @@
     </header>
     
     <main class="container">
-        <!-- Seção de Cadastro de Imóveis -->
-        <section class="cadastro-imoveis">
-            <h2>Gestão de Imóveis</h2>
-            
-            <!-- Dashboard de Estatísticas -->
-            <div class="dashboard-overview" style="margin-bottom: 2rem;">
-                <!-- Total de Imóveis Cadastrados - Em separado -->
-                <div class="dashboard-total" style="margin-bottom: 1.5rem;">
-                    <div class="stat-card stat-card-total" style="background: #e3f2fd; padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                        <div class="stat-number" id="totalImoveis" style="font-size: 3rem; font-weight: bold; color: #1976d2;">100</div>
-                        <div class="stat-label" style="color: #555; margin-top: 0.5rem; font-size: 1.1rem; font-weight: 500;">Imóveis Cadastrados</div>
+        <div class="dashboard-layout">
+            <div class="dashboard-content">
+                <!-- Seção de Cadastro de Imóveis -->
+                <section class="cadastro-imoveis">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">Gestão de Imóveis</h2>
+                    
+                    <!-- Dashboard de Estatísticas -->
+                    <div class="dashboard-overview" style="margin-bottom: 2rem;">
+                        <!-- Total de Imóveis Cadastrados - Em separado -->
+                        <div class="dashboard-total" style="margin-bottom: 1.5rem;">
+                            <div class="stat-card stat-card-total" style="background: #e3f2fd; padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                <div class="stat-number" id="totalImoveis" style="font-size: 3rem; font-weight: bold; color: #1976d2;">100</div>
+                                <div class="stat-label" style="color: #555; margin-top: 0.5rem; font-size: 1.1rem; font-weight: 500;">Imóveis Cadastrados</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Status dos Imóveis - Grid 4x1 -->
+                        <div class="dashboard-status">
+                            <div class="stat-card" style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                                <div class="stat-number" id="imoveisAtivos" style="font-size: 2rem; font-weight: bold; color: #388e3c;">65</div>
+                                <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Ativos</div>
+                            </div>
+                            <div class="stat-card" style="background: #fff3e0; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                                <div class="stat-number" id="imoveisProspeccao" style="font-size: 2rem; font-weight: bold; color: #f57c00;">15</div>
+                                <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Em Prospecção</div>
+                            </div>
+                            <div class="stat-card" style="background: #e1f5fe; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                                <div class="stat-number" id="imoveisMobilizacao" style="font-size: 2rem; font-weight: bold; color: #0288d1;">10</div>
+                                <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Em Mobilização</div>
+                            </div>
+                            <div class="stat-card" style="background: #fce4ec; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                                <div class="stat-number" id="imoveisDesmobilizacao" style="font-size: 2rem; font-weight: bold; color: #ad1457;">8</div>
+                                <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Em Desmobilização</div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                
-                <!-- Status dos Imóveis - Lado a lado -->
-                <div class="dashboard-status" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem;">
-                    <div class="stat-card" style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; text-align: center;">
-                        <div class="stat-number" id="imoveisAtivos" style="font-size: 2rem; font-weight: bold; color: #388e3c;">65</div>
-                        <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Ativos</div>
-                    </div>
-                    <div class="stat-card" style="background: #fff3e0; padding: 1.5rem; border-radius: 8px; text-align: center;">
-                        <div class="stat-number" id="imoveisProspeccao" style="font-size: 2rem; font-weight: bold; color: #f57c00;">15</div>
-                        <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Em Prospecção</div>
-                    </div>
-                    <div class="stat-card" style="background: #e1f5fe; padding: 1.5rem; border-radius: 8px; text-align: center;">
-                        <div class="stat-number" id="imoveisMobilizacao" style="font-size: 2rem; font-weight: bold; color: #0288d1;">10</div>
-                        <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Em Mobilização</div>
-                    </div>
-                    <div class="stat-card" style="background: #fce4ec; padding: 1.5rem; border-radius: 8px; text-align: center;">
-                        <div class="stat-number" id="imoveisDesmobilizacao" style="font-size: 2rem; font-weight: bold; color: #ad1457;">8</div>
-                        <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Em Desmobilização</div>
-                    </div>
-                    <div class="stat-card" style="background: #f3e5f5; padding: 1.5rem; border-radius: 8px; text-align: center;">
-                        <div class="stat-number" id="imoveisDesativado" style="font-size: 2rem; font-weight: bold; color: #7b1fa2;">2</div>
-                        <div class="stat-label" style="color: #555; margin-top: 0.5rem;">Desativado</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Ações Principais -->
+                    
+                    <!-- Ações Principais -->
             <div class="main-actions">
                 <div class="actions-primary">
                     <button id="btnNovoImovel" class="btn btn-primary btn-compact btn-action-responsive tooltip-wrapper" 
@@ -322,7 +320,9 @@
                     </div>
                 </div>
             </div>
-        </section>
+                </section>
+            </div>
+        </div>
 
         <!-- Seção de Locadores (OCULTA) -->
         <section class="locadores-section" style="display: none;">
